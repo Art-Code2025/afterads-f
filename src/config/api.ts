@@ -6,7 +6,7 @@ export const API_CONFIG = {
   },
   // للإنتاج - PRODUCTION READY 🚀
   production: {
-    baseURL: 'https://api.ghem.store', // Custom domain for backend
+    baseURL: 'https://afterads-b.onrender.com', // AfterAds backend on Render
   }
 };
 
