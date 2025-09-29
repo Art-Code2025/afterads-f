@@ -4,88 +4,68 @@ import { Users, Shield, Crown, HandshakeIcon, Medal, Award, Tag, Zap, ArrowRight
 import logo from "../../assets/her.webp";
 import { Link } from "react-router-dom";
 
-
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
 
-  /* استخدام Transform و Opacity فقط للـ GPU Acceleration */
   @keyframes float {
-    0%, 100% { transform: translateY(0px) translateZ(0); }
-    50% { transform: translateY(-20px) translateZ(0); }
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
   }
-  @keyframes float-delayed {
-    0%, 100% { transform: translateY(0px) translateZ(0); }
-    50% { transform: translateY(-15px) translateZ(0); }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
   }
-  @keyframes float-slow {
-    0%, 100% { transform: translateY(0px) translateZ(0); }
-    50% { transform: translateY(-10px) translateZ(0); }
+  @keyframes slideInRight {
+    from { opacity: 0; transform: translateX(50px); }
+    to { opacity: 1; transform: translateX(0); }
   }
-  @keyframes bounce-slow {
-    0%, 100% { transform: translateY(0px) translateZ(0); }
-    50% { transform: translateY(-25px) translateZ(0); }
+  @keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-50px); }
+    to { opacity: 1; transform: translateX(0); }
   }
-  @keyframes spin-slow {
-    from { transform: rotate(0deg) translateZ(0); }
-    to { transform: rotate(360deg) translateZ(0); }
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 0 15px rgba(24, 181, 213, 0.3); }
+    50% { box-shadow: 0 0 25px rgba(24, 181, 213, 0.5); }
   }
-  /* تم تحسين الـ Pulse ليعمل بـ Opacity فقط */
-  @keyframes pulse-optimized {
-    0%, 100% { opacity: 0.4; transform: translateZ(0); }
-    50% { opacity: 0.8; transform: translateZ(0); }
+  @keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
   }
-  /* هذا الأنيميشن لم يعد مستخدماً في الـ Steps بعد الانتقال لـ Framer Motion */
-  @keyframes card-reveal {
-    0% { 
-      opacity: 0; 
-      transform: translateY(50px) scale(0.95) translateZ(0);
-    }
-    100% { 
-      opacity: 1; 
-      transform: translateY(0) scale(1) translateZ(0);
-    }
-  }
-  /* تحسين Glow باستخدام خصائص أقل استهلاكاً */
-  @keyframes counter-glow {
-    0%, 100% { 
-      box-shadow: 0 0 5px rgba(24, 181, 213, 0.5); /* أخف من text-shadow */
-    }
-    50% { 
-      box-shadow: 0 0 15px rgba(24, 181, 213, 0.8);
-    }
-  }
-
-  .animate-float { animation: float 4s ease-in-out infinite; }
-  .animate-float-delayed { animation: float-delayed 5s ease-in-out infinite; }
-  .animate-float-slow { animation: float-slow 6s ease-in-out infinite; }
-  .animate-bounce-slow { animation: bounce-slow 4s ease-in-out infinite; }
-  .animate-spin-slow { animation: spin-slow 12s linear infinite; }
-  .animate-pulse { animation: pulse-optimized 3s ease-in-out infinite; } /* استخدمنا النسخة المحسنة */
-  .animate-counter-glow { animation: counter-glow 2s ease-in-out infinite; }
-  .will-change-transform { will-change: transform, opacity; }
   
-  /* ****************************************************** */
-  /* ************** الحل الأساسي للـ Mobile Lag ************ */
-  /* ****************************************************** */
+  .animate-float { animation: float 6s ease-in-out infinite; }
+  .animate-fadeIn { animation: fadeIn 0.8s ease-out forwards; }
+  .animate-slideInRight { animation: slideInRight 0.8s ease-out forwards; }
+  .animate-slideInLeft { animation: slideInLeft 0.8s ease-out forwards; }
+  .animate-glow { animation: glow 3s ease-in-out infinite; }
+  
+  .gradient-text {
+    background: linear-gradient(90deg, #18b5d5 0%, #0d8aa3 50%, #18b5d5 100%);
+    background-size: 200% auto;
+    animation: shimmer 3s linear infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
 
-  /* إيقاف العناصر المتحركة في الخلفية تماماً على شاشات الموبايل */
+  /* Optimize animations for mobile */
   @media (max-width: 768px) {
-    .services-background-bubbles,
-    .services-background-code {
-      display: none !important;
-    }
-    
-    /* إيقاف الـ float animation عشان ما يستهلكش البطارية على الموبايل */
-    .animate-float, .animate-float-delayed, .animate-float-slow, .animate-bounce-slow, .animate-spin-slow {
-        animation: none !important;
+    .animate-float { animation-duration: 8s; }
+    .animate-glow { animation: none; }
+  }
+
+  /* Reduce motion for accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
     }
   }
 `;
 
-// Counter Hook بدون تغيير لأنه يستخدم requestAnimationFrame وهو الأداء الأمثل
+// Counter Hook مُحسّن
 const useCountUp = (end: number, duration: number = 2000, shouldStart: boolean = false) => {
   const [count, setCount] = useState(0);
-  const [isComplete, setIsComplete] = useState(false);
 
   useEffect(() => {
     if (!shouldStart) return;
@@ -106,23 +86,17 @@ const useCountUp = (end: number, duration: number = 2000, shouldStart: boolean =
         animationFrame = requestAnimationFrame(animate);
       } else {
         setCount(end);
-        setIsComplete(true);
       }
     };
 
     animationFrame = requestAnimationFrame(animate);
-
-    return () => {
-      if (animationFrame) {
-        cancelAnimationFrame(animationFrame);
-      }
-    };
+    return () => cancelAnimationFrame(animationFrame);
   }, [end, duration, shouldStart]);
 
-  return { count, isComplete };
+  return count;
 };
 
-// Counter Component بدون تغيير
+// Counter Component
 interface AnimatedCounterProps {
   number: string;
   label: string;
@@ -136,13 +110,11 @@ const AnimatedCounter: React.FC<AnimatedCounterProps> = ({ number, label, should
   const targetNumber = isNumeric ? parseInt(number) : 0;
   const suffix = isNumeric ? number.replace(/\d+/, '') : number;
   
-  const { count, isComplete } = useCountUp(targetNumber, 2000, startAnimation);
+  const count = useCountUp(targetNumber, 2000, startAnimation);
 
   useEffect(() => {
     if (shouldAnimate) {
-      const timer = setTimeout(() => {
-        setStartAnimation(true);
-      }, delay);
+      const timer = setTimeout(() => setStartAnimation(true), delay);
       return () => clearTimeout(timer);
     }
   }, [shouldAnimate, delay]);
@@ -150,259 +122,202 @@ const AnimatedCounter: React.FC<AnimatedCounterProps> = ({ number, label, should
   const displayValue = isNumeric ? `${count}${suffix}` : number;
 
   return (
-    <div className="text-center bg-[#ffffff]/10 backdrop-blur-md border border-[#18b5d5]/30 rounded-2xl lg:rounded-3xl p-4 lg:p-6 hover:bg-[#ffffff]/20 hover:border-[#18b5d5]/50 transition-all duration-300 hover:scale-105 group">
-      <div className={`text-2xl sm:text-3xl lg:text-4xl font-black text-[#18b5d5] mb-1 lg:mb-2 group-hover:scale-110 transition-all duration-300 ${
-        startAnimation && !isComplete ? 'animate-counter-glow' : ''
-      }`}>
+    <div className="text-center bg-[#1f1f1f]/80 border border-[#18b5d5]/20 rounded-2xl lg:rounded-3xl p-4 lg:p-6 hover:bg-[#1f1f1f] hover:border-[#18b5d5]/40 transition-all duration-300 hover:scale-105 group">
+      <div className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#18b5d5] mb-1 lg:mb-2 group-hover:scale-110 transition-transform duration-300">
         {displayValue}
       </div>
       <div className="text-[#ffffff]/80 text-xs lg:text-sm group-hover:text-white transition-colors duration-300">
         {label}
       </div>
-      
     </div>
   );
 };
 
-// ... البيانات لم تتغير ...
-const features = [
-  { icon: Users, title: 'فريق خبراء', description: 'فريق من المطورين والمصممين ذوي الخبرة العالية ' },
-  { icon: Shield, title: 'ضمان الجودة', description: 'نضمن جودة عالية في جميع مشاريعنا مع اختبارات شاملة' },
-  { icon: Crown, title: 'خدمة مميزة', description: 'دعم فني متواصل وخدمة عملاء استثنائية على مدار الساعة' },
-  { icon: HandshakeIcon, title: 'تسليم سريع', description: 'التزام بالمواعيد المحددة وتسليم المشاريع في الوقت المناسب' },
-  { icon: Medal, title: 'خبرة واسعة', description: 'سنوات من الخبرة في تطوير حلول تقنية متطورة ومبتكرة' },
-  { icon: Award, title: 'معايير عالمية', description: 'نتبع أفضل الممارسات والمعايير العالمية في التطوير' },
-  { icon: Tag, title: 'أسعار تنافسية', description: 'أسعار مناسبة وعروض مميزة تناسب جميع الميزانيات' },
-  { icon: Zap, title: 'أداء متفوق', description: '  حلول سريعة ومحسنة للأداء مع أحدث التقنيات الحديثة' }
-];
-
-const steps = [
-  { number: '01', title: 'اكتشاف', description: 'نفهم أهدافك وجمهورك ونحدد التحديات من البداية', details: ['تحليل المتطلبات', 'دراسة الجمهور المستهدف', 'تحديد الأهداف'] },
-  { number: '02', title: 'أسلوب', description: 'تحديد اتجاه المشروع ونضع البصمة الإبداعية لهوية مشروعك', details: ['تصميم الهوية البصرية', 'اختيار الألوان والخطوط', 'وضع استراتيجية التصميم'] },
-  { number: '03', title: 'تخطيط', description: 'نرسم خارطة طريق دقيقة للتصميم والتنفيذ', details: ['رسم المخططات التفصيلية', 'تحديد الجدول الزمني', 'توزيع المهام'] },
-  { number: '04', title: 'إبداع', description: 'صياغة الرؤى التي تجلب أفكارك إلى الحياة', details: ['التصميم الإبداعي', 'تطوير النماذج الأولية', 'التفاعل والحركة'] },
-  { number: '05', title: 'تجميع', description: 'نوحد كل العناصر ونجهزها للإطلاق بسلاسة', details: ['دمج جميع المكونات', 'الاختبار الشامل', 'التحسين والمراجعة'] },
-  { number: '06', title: 'إطلاق', description: 'نشارك مشروعك مع العالم بثقة واحترافية', details: ['النشر المباشر', 'المتابعة والدعم', 'تحليل والتقييم'] }
-];
-
-const stats = [
-  { number: '500+', label: 'مشروع مكتمل' },
-  { number: '200+', label: 'عميل راضي' },
-  { number: '5+', label: 'سنوات خبرة' },
-  { number: '24/7', label: 'دعم فني' }
-];
-// ... نهاية البيانات ...
-
 const AboutUsSection = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const features = [
+    { icon: Users, title: 'فريق خبراء', description: 'فريق من المطورين والمصممين ذوي الخبرة العالية' },
+    { icon: Shield, title: 'ضمان الجودة', description: 'نضمن جودة عالية في جميع مشاريعنا مع اختبارات شاملة' },
+    { icon: Crown, title: 'خدمة مميزة', description: 'دعم فني متواصل وخدمة عملاء استثنائية على مدار الساعة' },
+    { icon: HandshakeIcon, title: 'تسليم سريع', description: 'التزام بالمواعيد المحددة وتسليم المشاريع في الوقت المناسب' },
+    { icon: Medal, title: 'خبرة واسعة', description: 'سنوات من الخبرة في تطوير حلول تقنية متطورة ومبتكرة' },
+    { icon: Award, title: 'معايير عالمية', description: 'نتبع أفضل الممارسات والمعايير العالمية في التطوير' },
+    { icon: Tag, title: 'أسعار تنافسية', description: 'أسعار مناسبة وعروض مميزة تناسب جميع الميزانيات' },
+    { icon: Zap, title: 'أداء متفوق', description: 'حلول سريعة ومحسنة للأداء مع أحدث التقنيات الحديثة' }
+  ];
+
+  const steps = [
+    { 
+      number: '01', 
+      title: 'اكتشاف', 
+      description: 'نفهم أهدافك وجمهورك ونحدد التحديات من البداية',
+      details: ['تحليل المتطلبات', 'دراسة الجمهور المستهدف', 'تحديد الأهداف'] 
+    },
+    { 
+      number: '02', 
+      title: 'أسلوب', 
+      description: 'تحديد اتجاه المشروع ونضع البصمة الإبداعية لهوية مشروعك',
+      details: ['تصميم الهوية البصرية', 'اختيار الألوان والخطوط', 'وضع استراتيجية التصميم'] 
+    },
+    { 
+      number: '03', 
+      title: 'تخطيط', 
+      description: 'نرسم خارطة طريق دقيقة للتصميم والتنفيذ',
+      details: ['رسم المخططات التفصيلية', 'تحديد الجدول الزمني', 'توزيع المهام'] 
+    },
+    { 
+      number: '04', 
+      title: 'إبداع', 
+      description: 'صياغة الرؤى التي تجلب أفكارك إلى الحياة',
+      details: ['التصميم الإبداعي', 'تطوير النماذج الأولية', 'التفاعل والحركة'] 
+    },
+    { 
+      number: '05', 
+      title: 'تجميع', 
+      description: 'نوحد كل العناصر ونجهزها للإطلاق بسلاسة',
+      details: ['دمج جميع المكونات', 'الاختبار الشامل', 'التحسين والمراجعة'] 
+    },
+    { 
+      number: '06', 
+      title: 'إطلاق', 
+      description: 'نشارك مشروعك مع العالم بثقة واحترافية',
+      details: ['النشر المباشر', 'المتابعة والدعم', 'تحليل والتقييم'] 
+    }
+  ];
+
+  const stats = [
+    { number: '500+', label: 'مشروع مكتمل' },
+    { number: '200+', label: 'عميل راضي' },
+    { number: '5+', label: 'سنوات خبرة' },
+    { number: '24/7', label: 'دعم فني' }
+  ];
+
   const aboutRef = useRef(null);
   const servicesRef = useRef(null);
   const statsRef = useRef(null);
-  // تم إزالة cardRefs لأنه لم يعد ضرورياً
-  const aboutControls = useAnimation();
-  const servicesControls = useAnimation();
   const aboutInView = useInView(aboutRef, { once: true, amount: 0.1 });
   const servicesInView = useInView(servicesRef, { once: true, amount: 0.1 });
   const statsInView = useInView(statsRef, { once: true, amount: 0.3 });
-
-  // تم تبسيط الـ useEffect للتحكم بـ Framer Motion فقط
-  useEffect(() => {
-    if (aboutInView) {
-      aboutControls.start('visible');
-    }
-    if (servicesInView) {
-      servicesControls.start('visible');
-      // تم حذف كود setTimeout والـ classList اليدوي
-    }
-  }, [aboutInView, servicesInView, aboutControls, servicesControls]);
-
-  // Framer Motion Variants بدون تغيير، لأنها جيدة وتستخدم Transform
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        duration: 0.8,
-        ease: 'easeOut',
-        staggerChildren: 0.15, // تقليل الـ Staggering قليلاً لتحسين الأداء
-        delayChildren: 0.1 // تقليل التأخير العام
-      }
-    }
-  };
-
-  const childVariants = {
-    hidden: { opacity: 0, y: 50, scale: 0.9 }, // استخدام Scale لتفعيل الـ GPU
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: { duration: 0.6, ease: 'easeOut' }
-    }
-  };
-
-  const imageVariants = {
-    hidden: { opacity: 0, x: 100 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 0.8, ease: 'easeOut' }
-    }
-  };
-
-  const sentenceVariants = {
-    hidden: { opacity: 0, x: 100 },
-    visible: { opacity: 1, x: 0, transition: { duration: 0.6, ease: 'easeOut' } }
-  };
 
   return (
     <>
       <style>{styles}</style>
       <div className="font-['Cairo']">
-{/* About Us Section */}
-<section ref={aboutRef} className="py-24 bg-[#292929] relative overflow-hidden">
-  <div className="absolute inset-0 backdrop-blur-3xl">
-    <div className="absolute inset-0 bg-gradient-to-br from-[#292929]/80 via-[#333333]/80 to-[#292929]/80"></div>
-  </div>
-
-  <motion.div
-    variants={containerVariants}
-    initial="hidden"
-    animate={aboutControls}
-    className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
-  >
-    {/* العنوان */}
-    <motion.div variants={childVariants} className="text-center mb-8 md:mb-16">
-      <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-black text-white mb-4 md:mb-6 leading-tight">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-center lg:gap-4">
-          {/* تم إزالة animate-pulse من العنوان لتقليل الحمل المستمر */}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#18b5d5] to-[#0d8aa3]">
-            AfterAds
-          </span>
-          <span className="text-white">
-            شريكك للنجاح الرقمي
-          </span>
-        </div>
-      </h2>
-      <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-[#ffffff]/80 max-w-4xl mx-auto leading-relaxed font-light px-4">
-        وكالة سعودية رائدة في الحلول الرقمية والتسويق الإبداعي. 
-        نحن صُنّاع <span className="text-[#18b5d5] font-semibold">ثيم ملاك </span> 
-        الأشهر والأكثر نجاحًا على منصة <span className="font-bold">سلة</span>، ونفخر بكوننا الخيار الأول لأكبر العلامات التجارية في الخليج
-      </p>
-    </motion.div>
-
-    {/* النص والخدمات + الصورة */}
-    <motion.div
-      variants={childVariants}
-      className="flex flex-col lg:flex-row items-stretch gap-6 lg:gap-12 mt-6 lg:mt-12"
-    >
-      {/* الخدمات */}
-      <motion.div variants={childVariants} className="flex-1 text-right flex flex-col justify-center">
-        <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-3 lg:mb-4">ماذا نقدم؟</h3>
-        <p className="text-[#ffffff]/80 text-sm sm:text-base lg:text-lg leading-relaxed mb-3 lg:mb-4">
-          نحن لا نقدّم خدمات فقط، بل نبني حلولًا متكاملة تصنع لك حضورًا رقميًا استثنائيًا:
-        </p>
-        <ul className="space-y-2 lg:space-y-3 text-sm sm:text-base lg:text-lg text-[#ffffff]/90">
-          <li className="bg-[#1f1f1f] px-3 sm:px-4 lg:px-5 py-2 sm:py-3 lg:py-4 rounded-xl lg:rounded-2xl border border-[#18b5d5]/20 hover:bg-[#222] transition min-h-[60px] sm:min-h-[70px] lg:min-h-[80px] flex items-center">
-            استراتيجيات تسويق رقمي دقيقة تستهدف السوق الخليجي وتضاعف مبيعاتك.
-          </li>
-          <li className="bg-[#1f1f1f] px-3 sm:px-4 lg:px-5 py-2 sm:py-3 lg:py-4 rounded-xl lg:rounded-2xl border border-[#18b5d5]/20 hover:bg-[#222] transition min-h-[60px] sm:min-h-[70px] lg:min-h-[80px] flex items-center">
-            تصميم هويات بصرية وواجهات استخدام عصرية تعكس قوة علامتك التجارية.
-          </li>
-          <li className="bg-[#1f1f1f] px-3 sm:px-4 lg:px-5 py-2 sm:py-3 lg:py-4 rounded-xl lg:rounded-2xl border border-[#18b5d5]/20 hover:bg-[#222] transition min-h-[60px] sm:min-h-[70px] lg:min-h-[80px] flex items-center">
-            تطوير مواقع ومتاجر إلكترونية متكاملة مع أنظمة دفع وإدارة احترافية
-          </li>
-          <li className="bg-[#1f1f1f] px-3 sm:px-4 lg:px-5 py-2 sm:py-3 lg:py-4 rounded-xl lg:rounded-2xl border border-[#18b5d5]/20 hover:bg-[#222] transition min-h-[60px] sm:min-h-[70px] lg:min-h-[80px] flex items-center">
-            برمجة تطبيقات موبايل عصرية تمنح عملاءك تجربة استخدام مميزة
-          </li>
-        </ul>
-      </motion.div>
-
-      {/* الصورة */}
-      <motion.div variants={imageVariants} className="flex-1 relative flex items-center">
-        <div className="relative w-full max-w-xs sm:max-w-sm lg:max-w-md mx-auto lg:mx-0 h-[250px] sm:h-[300px] lg:h-[470px]">
-          <img
-            src={logo}
-            alt="After Ads – فريقنا المبدع"
-            className="w-full h-full object-cover rounded-2xl lg:rounded-3xl border border-[#18b5d5]/30 shadow-lg shadow-[#18b5d5]/20 hover:scale-105 transition-transform duration-500 will-change-transform"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#18b5d5]/20 to-[#0d8aa3]/20 rounded-2xl lg:rounded-3xl blur-md opacity-80 hover:opacity-100 transition-opacity duration-500"></div>
-        </div>
-      </motion.div>
-    </motion.div>
-  </motion.div>
-</section>
-
-        {/* Why Choose Us Section */}
-        <section ref={servicesRef} data-section="services" className="py-24 bg-[#292929] relative overflow-hidden">
-          <div className="absolute inset-0 backdrop-blur-3xl">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#292929]/80 via-[#333333]/80 to-[#292929]/80"></div>
-            {/* إضافة كلاس لتوقيف هذا القسم على الموبايل */}
-            <div className="absolute inset-0 opacity-20 services-background-code"> 
-              <div className="absolute top-10 left-10 text-[#18b5d5]/80 font-mono text-sm animate-float filter drop-shadow-[0_0_10px_rgba(24,181,213,0.4)] will-change-transform">
-                &lt;section className="services"&gt;
-              </div>
-              <div className="absolute top-40 right-20 text-[#18b5d5]/50 font-mono text-xs animate-float-delayed filter drop-shadow-[0_0_8px_rgba(24,181,213,0.3)] will-change-transform">
-                const services = () =&gt; {}
-              </div>
-              <div className="absolute bottom-60 left-32 text-[#18b5d5]/70 font-mono text-sm animate-float-slow filter drop-shadow-[0_0_10px_rgba(24,181,213,0.4)] will-change-transform">
-                useState([data, setData])
-              </div>
-              <div className="absolute bottom-32 right-10 text-[#18b5d5]/40 font-mono text-xs animate-bounce-slow filter drop-shadow-[0_0_8px_rgba(24,181,213,0.3)] will-change-transform">
-                API.optimize.SEO();
-              </div>
-              <div className="absolute top-80 left-1/2 text-[#18b5d5]/60 font-mono text-sm animate-pulse filter drop-shadow-[0_0_10px_rgba(24,181,213,0.4)] will-change-transform">
-                fetch('/services').then()
-              </div>
-            </div>
-            {/* إضافة كلاس لتوقيف هذا القسم على الموبايل، وتقليل عدد العناصر إلى 10 فقط للديسكتوب */}
-            <div className="absolute inset-0 services-background-bubbles"> 
-              {[...Array(10)].map((_, i) => ( // تم تقليل العدد من 20 إلى 10
-                <div
-                  key={i}
-                  className={`absolute w-2 h-2 bg-[#18b5d5]/60 rounded-full filter blur-md ${
-                    i % 2 === 0 ? 'animate-pulse' : 'animate-ping'
-                  } drop-shadow-[0_0_15px_rgba(24,181,213,0.6)] will-change-transform`}
-                  style={{
-                    left: `${Math.random() * 100}%`,
-                    top: `${Math.random() * 100}%`,
-                    animationDelay: `${Math.random() * 1}s`, // تقليل التأخير
-                    animationDuration: `${2 + Math.random() * 2}s`, // تقليل مدة الأنيميشن
-                    opacity: Math.random() * 0.4 + 0.3 // تقليل الـ Opacity
-                  }}
-                />
-              ))}
-            </div>
+        {/* About Us Section */}
+        <section ref={aboutRef} className="py-16 md:py-24 bg-[#292929] relative overflow-hidden">
+          {/* خلفية مبسطة */}
+          <div className="absolute inset-0 bg-gradient-to-br from-[#292929] via-[#2d2d2d] to-[#292929]">
+            {!isMobile && (
+              <>
+                <div className="absolute top-20 left-20 w-64 h-64 bg-[#18b5d5]/5 rounded-full blur-3xl"></div>
+                <div className="absolute bottom-20 right-20 w-80 h-80 bg-[#18b5d5]/5 rounded-full blur-3xl"></div>
+              </>
+            )}
           </div>
 
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate={servicesControls}
-            className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
-          >
-            <motion.div variants={childVariants} className="text-center mb-8 lg:mb-16">
-             
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* العنوان */}
+            <div className={`text-center mb-8 md:mb-16 ${aboutInView ? 'animate-fadeIn' : 'opacity-0'}`}>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-black text-white mb-4 md:mb-6 leading-tight">
+                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-center lg:gap-4">
+                  <span className="gradient-text">
+                    AfterAds
+                  </span>
+                  <span className="text-white">
+                    شريكك للنجاح الرقمي
+                  </span>
+                </div>
+              </h2>
+              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-[#ffffff]/80 max-w-4xl mx-auto leading-relaxed font-light px-4">
+                وكالة سعودية رائدة في الحلول الرقمية والتسويق الإبداعي. 
+                نحن صُنّاع <span className="text-[#18b5d5] font-semibold">ثيم ملاك</span> 
+                الأشهر والأكثر نجاحًا على منصة <span className="font-bold">سلة</span>، ونفخر بكوننا الخيار الأول لأكبر العلامات التجارية في الخليج
+              </p>
+            </div>
+
+            {/* النص والخدمات + الصورة */}
+            <div className="flex flex-col lg:flex-row items-stretch gap-6 lg:gap-12 mt-6 lg:mt-12">
+              {/* الخدمات */}
+              <div className={`flex-1 text-right flex flex-col justify-center ${aboutInView ? 'animate-slideInRight' : 'opacity-0'}`} style={{ animationDelay: '0.2s' }}>
+                <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-3 lg:mb-4">ماذا نقدم؟</h3>
+                <p className="text-[#ffffff]/80 text-sm sm:text-base lg:text-lg leading-relaxed mb-3 lg:mb-4">
+                  نحن لا نقدّم خدمات فقط، بل نبني حلولًا متكاملة تصنع لك حضورًا رقميًا استثنائيًا:
+                </p>
+                <ul className="space-y-2 lg:space-y-3 text-sm sm:text-base lg:text-lg text-[#ffffff]/90">
+                  {[
+                    'استراتيجيات تسويق رقمي دقيقة تستهدف السوق الخليجي وتضاعف مبيعاتك.',
+                    'تصميم هويات بصرية وواجهات استخدام عصرية تعكس قوة علامتك التجارية.',
+                    'تطوير مواقع ومتاجر إلكترونية متكاملة مع أنظمة دفع وإدارة احترافية',
+                    'برمجة تطبيقات موبايل عصرية تمنح عملاءك تجربة استخدام مميزة'
+                  ].map((text, i) => (
+                    <li 
+                      key={i}
+                      className="bg-[#1f1f1f]/60 px-3 sm:px-4 lg:px-5 py-2 sm:py-3 lg:py-4 rounded-xl lg:rounded-2xl border border-[#18b5d5]/10 hover:bg-[#1f1f1f] hover:border-[#18b5d5]/30 transition-all duration-300 min-h-[60px] sm:min-h-[70px] lg:min-h-[80px] flex items-center"
+                    >
+                      {text}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* الصورة */}
+              <div className={`flex-1 relative flex items-center ${aboutInView ? 'animate-slideInLeft' : 'opacity-0'}`} style={{ animationDelay: '0.4s' }}>
+                <div className="relative w-full max-w-xs sm:max-w-sm lg:max-w-md mx-auto lg:mx-0 h-[250px] sm:h-[300px] lg:h-[470px]">
+                  <img
+                    src={logo}
+                    alt="After Ads – فريقنا المبدع"
+                    className="w-full h-full object-cover rounded-2xl lg:rounded-3xl border border-[#18b5d5]/30 shadow-lg shadow-[#18b5d5]/10 hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#18b5d5]/10 to-[#0d8aa3]/10 rounded-2xl lg:rounded-3xl opacity-0 hover:opacity-100 transition-opacity duration-500"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Why Choose Us Section */}
+        <section ref={servicesRef} className="py-16 md:py-24 bg-[#292929] relative overflow-hidden">
+          {/* خلفية مبسطة */}
+          <div className="absolute inset-0 bg-gradient-to-br from-[#2d2d2d] via-[#292929] to-[#2d2d2d]">
+            {!isMobile && (
+              <>
+                <div className="absolute top-40 right-40 w-72 h-72 bg-[#18b5d5]/5 rounded-full blur-3xl"></div>
+                <div className="absolute bottom-40 left-40 w-96 h-96 bg-[#18b5d5]/5 rounded-full blur-3xl"></div>
+              </>
+            )}
+          </div>
+
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className={`text-center mb-8 lg:mb-16 ${servicesInView ? 'animate-fadeIn' : 'opacity-0'}`}>
               <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl font-black text-white mb-3 lg:mb-6 leading-tight">
-                {/* تم استبدال animate-pulse بالنسخة المحسنة لو كان ضروري، ولكن يفضل إزالته تماماً هنا */}
-                نحن <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#18b5d5] to-[#0d8aa3]">الخيار الأمثل</span> لمشروعك 
+                نحن <span className="gradient-text">الخيار الأمثل</span> لمشروعك
               </h2>
               <p className="text-sm sm:text-base md:text-lg lg:text-xl text-[#ffffff]/80 max-w-3xl mx-auto leading-relaxed font-light px-4">
                 نجمع بين الخبرة والإبداع لنقدم لك حلولاً تقنية متميزة تساعدك على تحقيق أهدافك
               </p>
-            </motion.div>
+            </div>
 
-            <motion.div variants={childVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mb-8 lg:mb-16">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mb-8 lg:mb-16">
               {features.map((feature, index) => {
                 const IconComponent = feature.icon;
                 return (
-                  <motion.div
+                  <div
                     key={index}
-                    variants={childVariants}
-                    className="will-change-transform transition-all duration-700 group cursor-pointer flex-1"
+                    className={`transition-all duration-700 group cursor-pointer ${servicesInView ? 'animate-fadeIn' : 'opacity-0'}`}
+                    style={{ animationDelay: `${index * 0.1}s` }}
                   >
-                    <div className="relative bg-[#ffffff]/10 backdrop-blur-lg border border-[#18b5d5]/30 rounded-xl lg:rounded-2xl p-3 lg:p-5 hover:border-[#18b5d5]/50 hover:shadow-[#18b5d5]/30 transition-all duration-500 hover:scale-105 will-change-transform">
-                      <div className="relative z-10 text-center">
+                    <div className="relative bg-[#1f1f1f]/60 border border-[#18b5d5]/20 rounded-xl lg:rounded-2xl p-3 lg:p-5 hover:bg-[#1f1f1f] hover:border-[#18b5d5]/40 transition-all duration-300 hover:scale-105">
+                      <div className="text-center">
                         <div className="relative mb-2 lg:mb-4 mx-auto w-fit">
-                          <div className="w-10 h-10 lg:w-14 lg:h-14 bg-[#ffffff]/10 backdrop-blur-md border border-[#18b5d5]/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300 will-change-transform">
+                          <div className="w-10 h-10 lg:w-14 lg:h-14 bg-[#18b5d5]/10 border border-[#18b5d5]/20 rounded-lg flex items-center justify-center group-hover:bg-[#18b5d5]/20 group-hover:scale-110 transition-all duration-300">
                             <IconComponent className="w-5 h-5 lg:w-7 lg:h-7 text-[#18b5d5] group-hover:text-white transition-colors duration-300" />
                           </div>
                         </div>
@@ -414,41 +329,37 @@ const AboutUsSection = () => {
                         </p>
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                 );
               })}
-            </motion.div>
+            </div>
 
-            <motion.div variants={childVariants} className="text-center mb-6 lg:mb-12">
-              <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-black text-white tracking-tight drop-shadow-lg">
+            <div className={`text-center mb-6 lg:mb-12 ${servicesInView ? 'animate-fadeIn' : 'opacity-0'}`} style={{ animationDelay: '0.8s' }}>
+              <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-black text-white">
                 اعمل معنا إذا كنت ترغب في:
               </h2>
-            </motion.div>
+            </div>
 
-            <motion.div variants={childVariants} className="text-center space-y-2 lg:space-y-4 mb-8 lg:mb-16 px-4">
+            <div className="text-center space-y-2 lg:space-y-4 mb-8 lg:mb-16 px-4">
               {[
                 'بناء حضور رقمي يواكب طموحاتك ويعكس قوة علامتك.',
                 'الوصول إلى عملاءك بطريقة أذكى من خلال حلول تسويق فعّالة.',
                 'تحويل فكرتك إلى علامة تجارية تترك بصمة حقيقية.',
                 'نمو متواصل قائم على حلول تقنية مبتكرة واستراتيجيات مدروسة.'
               ].map((sentence, index) => (
-                <motion.p
+                <p
                   key={index}
-                  variants={sentenceVariants}
-                  className="text-sm sm:text-base md:text-lg lg:text-xl text-[#18b5d5] max-w-3xl mx-auto leading-relaxed font-semibold relative"
+                  className={`text-sm sm:text-base md:text-lg lg:text-xl text-[#18b5d5] max-w-3xl mx-auto leading-relaxed font-semibold relative ${servicesInView ? 'animate-fadeIn' : 'opacity-0'}`}
+                  style={{ animationDelay: `${1 + index * 0.1}s` }}
                 >
-                  <span className="absolute inset-0 bg-[#18b5d5]/20 rounded-lg blur-md opacity-50"></span>
+                  <span className="absolute inset-0 bg-[#18b5d5]/10 rounded-lg blur-sm opacity-50"></span>
                   <span className="relative">{sentence}</span>
-                </motion.p>
+                </p>
               ))}
-            </motion.div>
+            </div>
 
-            {/* Enhanced Stats Section with Counter Animation */}
-            <motion.div 
-              ref={statsRef}
-              variants={childVariants} 
-              className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-8 mb-12 lg:mb-20"
-            >
+            {/* Stats Section */}
+            <div ref={statsRef} className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-8 mb-12 lg:mb-20">
               {stats.map((stat, index) => (
                 <AnimatedCounter
                   key={index}
@@ -458,34 +369,27 @@ const AboutUsSection = () => {
                   delay={index * 200}
                 />
               ))}
-            </motion.div>
+            </div>
 
-            <motion.div variants={childVariants} className="mt-16 lg:mt-32">
-              <div className="text-center mb-8 lg:mb-16">
+            <div className="mt-16 lg:mt-32">
+              <div className={`text-center mb-8 lg:mb-16 ${servicesInView ? 'animate-fadeIn' : 'opacity-0'}`} style={{ animationDelay: '1.4s' }}>
                 <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white mb-4 lg:mb-6">
-                  رحلة <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#18b5d5] to-[#0d8aa3]">مشروعك</span> معنا
+                  رحلة <span className="gradient-text">مشروعك</span> معنا
                 </h3>
                 <p className="text-[#ffffff]/80 max-w-2xl mx-auto text-base lg:text-lg leading-relaxed px-4">
                   منهجية احترافية مُحكمة من ست خطوات لضمان نجاح مشروعك وتحقيق رؤيتك
                 </p>
               </div>
-              
-              {/* تم تطبيق Framer Motion Staggering على الـ Steps */}
-              <motion.div
-                variants={containerVariants} // استخدم الـ Container Variants لتطبيق الـ Staggering
-                initial="hidden"
-                animate={servicesControls} // استخدم نفس الـ Controls
-                className="grid grid-cols-2 lg:grid-cols-6 gap-4 lg:gap-6"
-              >
+
+              <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 lg:gap-6">
                 {steps.map((step, index) => (
-                  <motion.div
+                  <div
                     key={index}
-                    variants={childVariants} // استخدام الـ Child Variants لتحريك كل خطوة بـ Transform/Opacity
-                    // تم إزالة ref والـ classList اليدوي
-                    className="will-change-transform transition-all duration-700 group cursor-pointer"
+                    className={`transition-all duration-700 group cursor-pointer ${servicesInView ? 'animate-fadeIn' : 'opacity-0'}`}
+                    style={{ animationDelay: `${1.6 + index * 0.1}s` }}
                   >
                     <div className="relative mb-4 lg:mb-6 z-10">
-                      <div className="w-20 h-20 lg:w-24 lg:h-24 xl:w-32 xl:h-32 bg-[#ffffff]/10 backdrop-blur-2xl border-2 border-[#18b5d5]/30 rounded-full flex flex-col items-center justify-center group-hover:bg-[#ffffff]/20 group-hover:border-[#18b5d5]/70 transition-all duration-500 group-hover:scale-105 group-hover:shadow-2xl group-hover:shadow-[#18b5d5]/40 mx-auto will-change-transform">
+                      <div className="w-20 h-20 lg:w-24 lg:h-24 xl:w-32 xl:h-32 bg-[#1f1f1f]/60 border-2 border-[#18b5d5]/20 rounded-full flex flex-col items-center justify-center group-hover:bg-[#1f1f1f] group-hover:border-[#18b5d5]/50 transition-all duration-300 group-hover:scale-105 mx-auto">
                         <span className="text-sm lg:text-lg xl:text-2xl font-black text-[#18b5d5] mb-1 group-hover:text-white transition-colors duration-300">
                           {step.number}
                         </span>
@@ -493,7 +397,6 @@ const AboutUsSection = () => {
                           {step.title}
                         </span>
                       </div>
-                      <div className="absolute inset-0 w-20 h-20 lg:w-24 lg:h-24 xl:w-32 xl:h-32 bg-gradient-to-r from-[#18b5d5]/80 to-[#0d8aa3]/80 rounded-full blur-md opacity-80 group-hover:opacity-100 transition-opacity duration-500 will-change-opacity z-[-2] mx-auto"></div>
                     </div>
                     <div className="text-center">
                       <p className="text-[#ffffff]/80 text-xs leading-relaxed group-hover:text-white transition-colors duration-300">
@@ -508,15 +411,13 @@ const AboutUsSection = () => {
                         ))}
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                 ))}
-              </motion.div>
+              </div>
+            </div>
 
-
-            </motion.div>
-
-            <motion.div variants={childVariants} className="text-center mt-12 lg:mt-20 px-4">
-              <div className="bg-[#ffffff]/10 backdrop-blur-xl border border-[#18b5d5]/30 rounded-2xl lg:rounded-3xl p-6 lg:p-8 hover:bg-[#ffffff]/20 hover:border-[#18b5d5]/50 transition-all duration-500 max-w-4xl mx-auto">
+            <div className={`text-center mt-12 lg:mt-20 px-4 ${servicesInView ? 'animate-fadeIn' : 'opacity-0'}`} style={{ animationDelay: '2.2s' }}>
+              <div className="bg-[#1f1f1f]/60 border border-[#18b5d5]/20 rounded-2xl lg:rounded-3xl p-6 lg:p-8 hover:bg-[#1f1f1f] hover:border-[#18b5d5]/40 transition-all duration-500 max-w-4xl mx-auto">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-6 lg:gap-8">
                   <div className="text-center md:text-right flex-1">
                     <h3 className="text-2xl lg:text-3xl font-black text-white mb-3 lg:mb-4">مستعد لبدء مشروعك؟</h3>
@@ -524,20 +425,18 @@ const AboutUsSection = () => {
                       دعنا نحول أفكارك إلى واقع رقمي مذهل بأحدث التقنيات والمعايير العالمية
                     </p>
                   </div>
-                 <Link
-                  to="/categories"
-                  aria-label="ابدأ مشروعك الآن"
-                  className="inline-flex items-center gap-2 lg:gap-3 justify-center bg-[#18b5d5]/10 backdrop-blur-md border border-[#18b5d5]/50 text-[#18b5d5] text-sm lg:text-base font-bold rounded-xl lg:rounded-2xl px-6 lg:px-10 py-3 lg:py-4 hover:bg-[#18b5d5]/20 hover:shadow-lg hover:shadow-[#18b5d5]/40 transition-all duration-300 hover:scale-105 group"
-                >
-                  ابدأ الآن
-                  <ArrowRight className="w-4 h-4 lg:w-6 lg:h-6 text-[#18b5d5] group-hover:translate-x-1 transition-transform duration-300" />
-                </Link>
-
-                  
+                  <Link
+                    to="/categories"
+                    aria-label="ابدأ مشروعك الآن"
+                    className="inline-flex items-center gap-2 lg:gap-3 justify-center bg-[#18b5d5]/20 border border-[#18b5d5]/50 text-[#18b5d5] text-sm lg:text-base font-bold rounded-xl lg:rounded-2xl px-6 lg:px-10 py-3 lg:py-4 hover:bg-[#18b5d5]/30 hover:shadow-lg hover:shadow-[#18b5d5]/30 transition-all duration-300 hover:scale-105 group"
+                  >
+                    ابدأ الآن
+                    <ArrowRight className="w-4 h-4 lg:w-6 lg:h-6 text-[#18b5d5] group-hover:translate-x-1 transition-transform duration-300" />
+                  </Link>
                 </div>
               </div>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         </section>
       </div>
     </>
