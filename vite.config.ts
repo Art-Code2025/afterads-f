@@ -21,46 +21,18 @@ export default defineConfig({
   build: {
     // تحسين حجم الملفات وتقسيمها
     chunkSizeWarningLimit: 1000,
-    // تحسين الأداء
-    target: 'es2015',
+    // تحسين الأداء - استخدام target أكثر أماناً
+    target: 'es2018',
     sourcemap: false,
     rollupOptions: {
       output: {
-        manualChunks(id) {
-          // تقسيم المكتبات الكبيرة
-          if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom')) {
-              return 'react-vendor';
-            }
-            if (id.includes('react-router')) {
-              return 'router-vendor';
-            }
-            if (id.includes('lucide-react')) {
-              return 'ui-vendor';
-            }
-            if (id.includes('react-toastify')) {
-              return 'toast-vendor';
-            }
-            if (id.includes('framer-motion')) {
-              return 'animation-vendor';
-            }
-            // باقي المكتبات
-            return 'vendor';
-          }
-          
-          // تقسيم مكونات التطبيق
-          if (id.includes('ShoppingCart') || id.includes('cartOptimizer')) {
-            return 'cart-components';
-          }
-          if (id.includes('ProductDetail') || id.includes('ProductsByCategory') || id.includes('ProductCard')) {
-            return 'product-components';
-          }
-          if (id.includes('Checkout') || id.includes('ThankYou')) {
-            return 'checkout-components';
-          }
-          if (id.includes('Admin') || id.includes('Form')) {
-            return 'admin-components';
-          }
+        manualChunks: {
+          // تقسيم أبسط وأكثر أماناً
+          'react-vendor': ['react', 'react-dom'],
+          'router-vendor': ['react-router-dom'],
+          'animation-vendor': ['framer-motion'],
+          'ui-vendor': ['lucide-react', 'react-icons'],
+          'utils-vendor': ['lodash', 'react-toastify']
         },
         // إضافة ترتيب أفضل للـ chunks
         chunkFileNames: 'assets/[name]-[hash].js',
