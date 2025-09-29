@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, useAnimation, useInView } from 'framer-motion';
-import { Users, Shield, Crown, HandshakeIcon, Medal, Award, Tag, Zap, ArrowRight, CheckCircle, Heart } from 'lucide-react';
+import { Users, Shield, Crown, HandshakeIcon, Medal, Award, Tag, Zap, ArrowRight, CheckCircle } from 'lucide-react';
 import logo from "../../assets/her.webp";
 import { Link } from "react-router-dom";
 
@@ -8,64 +8,81 @@ import { Link } from "react-router-dom";
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
 
+  /* استخدام Transform و Opacity فقط للـ GPU Acceleration */
   @keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-20px); }
+    0%, 100% { transform: translateY(0px) translateZ(0); }
+    50% { transform: translateY(-20px) translateZ(0); }
   }
   @keyframes float-delayed {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-15px); }
+    0%, 100% { transform: translateY(0px) translateZ(0); }
+    50% { transform: translateY(-15px) translateZ(0); }
   }
   @keyframes float-slow {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
+    0%, 100% { transform: translateY(0px) translateZ(0); }
+    50% { transform: translateY(-10px) translateZ(0); }
   }
   @keyframes bounce-slow {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-25px); }
+    0%, 100% { transform: translateY(0px) translateZ(0); }
+    50% { transform: translateY(-25px) translateZ(0); }
   }
   @keyframes spin-slow {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from { transform: rotate(0deg) translateZ(0); }
+    to { transform: rotate(360deg) translateZ(0); }
   }
-  @keyframes pulse {
-    0%, 100% { opacity: 0.4; }
-    50% { opacity: 0.8; }
+  /* تم تحسين الـ Pulse ليعمل بـ Opacity فقط */
+  @keyframes pulse-optimized {
+    0%, 100% { opacity: 0.4; transform: translateZ(0); }
+    50% { opacity: 0.8; transform: translateZ(0); }
   }
+  /* هذا الأنيميشن لم يعد مستخدماً في الـ Steps بعد الانتقال لـ Framer Motion */
   @keyframes card-reveal {
     0% { 
       opacity: 0; 
-      transform: translateY(50px) scale(0.95);
-    }
-    50% {
-      opacity: 0.5;
-      transform: translateY(10px) scale(1.02);
+      transform: translateY(50px) scale(0.95) translateZ(0);
     }
     100% { 
       opacity: 1; 
-      transform: translateY(0) scale(1);
+      transform: translateY(0) scale(1) translateZ(0);
     }
   }
+  /* تحسين Glow باستخدام خصائص أقل استهلاكاً */
   @keyframes counter-glow {
     0%, 100% { 
-      text-shadow: 0 0 10px rgba(24, 181, 213, 0.5);
+      box-shadow: 0 0 5px rgba(24, 181, 213, 0.5); /* أخف من text-shadow */
     }
     50% { 
-      text-shadow: 0 0 20px rgba(24, 181, 213, 0.8), 0 0 30px rgba(24, 181, 213, 0.6);
+      box-shadow: 0 0 15px rgba(24, 181, 213, 0.8);
     }
   }
+
   .animate-float { animation: float 4s ease-in-out infinite; }
   .animate-float-delayed { animation: float-delayed 5s ease-in-out infinite; }
   .animate-float-slow { animation: float-slow 6s ease-in-out infinite; }
   .animate-bounce-slow { animation: bounce-slow 4s ease-in-out infinite; }
   .animate-spin-slow { animation: spin-slow 12s linear infinite; }
-  .animate-pulse { animation: pulse 3s ease-in-out infinite; }
-  .animate-card-reveal { animation: card-reveal 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+  .animate-pulse { animation: pulse-optimized 3s ease-in-out infinite; } /* استخدمنا النسخة المحسنة */
   .animate-counter-glow { animation: counter-glow 2s ease-in-out infinite; }
   .will-change-transform { will-change: transform, opacity; }
+  
+  /* ****************************************************** */
+  /* ************** الحل الأساسي للـ Mobile Lag ************ */
+  /* ****************************************************** */
+
+  /* إيقاف العناصر المتحركة في الخلفية تماماً على شاشات الموبايل */
+  @media (max-width: 768px) {
+    .services-background-bubbles,
+    .services-background-code {
+      display: none !important;
+    }
+    
+    /* إيقاف الـ float animation عشان ما يستهلكش البطارية على الموبايل */
+    .animate-float, .animate-float-delayed, .animate-float-slow, .animate-bounce-slow, .animate-spin-slow {
+        animation: none !important;
+    }
+  }
 `;
 
-// Counter Hook للعد التدريجي
+// Counter Hook بدون تغيير لأنه يستخدم requestAnimationFrame وهو الأداء الأمثل
 const useCountUp = (end: number, duration: number = 2000, shouldStart: boolean = false) => {
   const [count, setCount] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
@@ -80,7 +97,6 @@ const useCountUp = (end: number, duration: number = 2000, shouldStart: boolean =
       if (!startTime) startTime = currentTime;
       const progress = Math.min((currentTime - startTime) / duration, 1);
       
-      // easeOut animation curve
       const easeOut = 1 - Math.pow(1 - progress, 3);
       const currentCount = Math.floor(easeOut * end);
       
@@ -106,7 +122,7 @@ const useCountUp = (end: number, duration: number = 2000, shouldStart: boolean =
   return { count, isComplete };
 };
 
-// Counter Component
+// Counter Component بدون تغيير
 interface AnimatedCounterProps {
   number: string;
   label: string;
@@ -148,65 +164,58 @@ const AnimatedCounter: React.FC<AnimatedCounterProps> = ({ number, label, should
   );
 };
 
+// ... البيانات لم تتغير ...
+const features = [
+  { icon: Users, title: 'فريق خبراء', description: 'فريق من المطورين والمصممين ذوي الخبرة العالية ' },
+  { icon: Shield, title: 'ضمان الجودة', description: 'نضمن جودة عالية في جميع مشاريعنا مع اختبارات شاملة' },
+  { icon: Crown, title: 'خدمة مميزة', description: 'دعم فني متواصل وخدمة عملاء استثنائية على مدار الساعة' },
+  { icon: HandshakeIcon, title: 'تسليم سريع', description: 'التزام بالمواعيد المحددة وتسليم المشاريع في الوقت المناسب' },
+  { icon: Medal, title: 'خبرة واسعة', description: 'سنوات من الخبرة في تطوير حلول تقنية متطورة ومبتكرة' },
+  { icon: Award, title: 'معايير عالمية', description: 'نتبع أفضل الممارسات والمعايير العالمية في التطوير' },
+  { icon: Tag, title: 'أسعار تنافسية', description: 'أسعار مناسبة وعروض مميزة تناسب جميع الميزانيات' },
+  { icon: Zap, title: 'أداء متفوق', description: '  حلول سريعة ومحسنة للأداء مع أحدث التقنيات الحديثة' }
+];
+
+const steps = [
+  { number: '01', title: 'اكتشاف', description: 'نفهم أهدافك وجمهورك ونحدد التحديات من البداية', details: ['تحليل المتطلبات', 'دراسة الجمهور المستهدف', 'تحديد الأهداف'] },
+  { number: '02', title: 'أسلوب', description: 'تحديد اتجاه المشروع ونضع البصمة الإبداعية لهوية مشروعك', details: ['تصميم الهوية البصرية', 'اختيار الألوان والخطوط', 'وضع استراتيجية التصميم'] },
+  { number: '03', title: 'تخطيط', description: 'نرسم خارطة طريق دقيقة للتصميم والتنفيذ', details: ['رسم المخططات التفصيلية', 'تحديد الجدول الزمني', 'توزيع المهام'] },
+  { number: '04', title: 'إبداع', description: 'صياغة الرؤى التي تجلب أفكارك إلى الحياة', details: ['التصميم الإبداعي', 'تطوير النماذج الأولية', 'التفاعل والحركة'] },
+  { number: '05', title: 'تجميع', description: 'نوحد كل العناصر ونجهزها للإطلاق بسلاسة', details: ['دمج جميع المكونات', 'الاختبار الشامل', 'التحسين والمراجعة'] },
+  { number: '06', title: 'إطلاق', description: 'نشارك مشروعك مع العالم بثقة واحترافية', details: ['النشر المباشر', 'المتابعة والدعم', 'تحليل والتقييم'] }
+];
+
+const stats = [
+  { number: '500+', label: 'مشروع مكتمل' },
+  { number: '200+', label: 'عميل راضي' },
+  { number: '5+', label: 'سنوات خبرة' },
+  { number: '24/7', label: 'دعم فني' }
+];
+// ... نهاية البيانات ...
+
 const AboutUsSection = () => {
-  const features = [
-    { icon: Users, title: 'فريق خبراء', description: 'فريق من المطورين والمصممين ذوي الخبرة العالية ' },
-    { icon: Shield, title: 'ضمان الجودة', description: 'نضمن جودة عالية في جميع مشاريعنا مع اختبارات شاملة' },
-    { icon: Crown, title: 'خدمة مميزة', description: 'دعم فني متواصل وخدمة عملاء استثنائية على مدار الساعة' },
-    { icon: HandshakeIcon, title: 'تسليم سريع', description: 'التزام بالمواعيد المحددة وتسليم المشاريع في الوقت المناسب' },
-    { icon: Medal, title: 'خبرة واسعة', description: 'سنوات من الخبرة في تطوير حلول تقنية متطورة ومبتكرة' },
-    { icon: Award, title: 'معايير عالمية', description: 'نتبع أفضل الممارسات والمعايير العالمية في التطوير' },
-    { icon: Tag, title: 'أسعار تنافسية', description: 'أسعار مناسبة وعروض مميزة تناسب جميع الميزانيات' },
-    { icon: Zap, title: 'أداء متفوق', description: '  حلول سريعة ومحسنة للأداء مع أحدث التقنيات الحديثة' }
-  ];
-
-  const steps = [
-    { number: '01', title: 'اكتشاف', description: 'نفهم أهدافك وجمهورك ونحدد التحديات من البداية',
-      details: ['تحليل المتطلبات', 'دراسة الجمهور المستهدف', 'تحديد الأهداف'] },
-    { number: '02', title: 'أسلوب', description: 'تحديد اتجاه المشروع ونضع البصمة الإبداعية لهوية مشروعك',
-      details: ['تصميم الهوية البصرية', 'اختيار الألوان والخطوط', 'وضع استراتيجية التصميم'] },
-    { number: '03', title: 'تخطيط', description: 'نرسم خارطة طريق دقيقة للتصميم والتنفيذ',
-      details: ['رسم المخططات التفصيلية', 'تحديد الجدول الزمني', 'توزيع المهام'] },
-    { number: '04', title: 'إبداع', description: 'صياغة الرؤى التي تجلب أفكارك إلى الحياة',
-      details: ['التصميم الإبداعي', 'تطوير النماذج الأولية', 'التفاعل والحركة'] },
-    { number: '05', title: 'تجميع', description: 'نوحد كل العناصر ونجهزها للإطلاق بسلاسة',
-      details: ['دمج جميع المكونات', 'الاختبار الشامل', 'التحسين والمراجعة'] },
-    { number: '06', title: 'إطلاق', description: 'نشارك مشروعك مع العالم بثقة واحترافية',
-      details: ['النشر المباشر', 'المتابعة والدعم', 'تحليل والتقييم'] }
-  ];
-
-  const stats = [
-    { number: '500+', label: 'مشروع مكتمل' },
-    { number: '200+', label: 'عميل راضي' },
-    { number: '5+', label: 'سنوات خبرة' },
-    { number: '24/7', label: 'دعم فني' }
-  ];
-
   const aboutRef = useRef(null);
   const servicesRef = useRef(null);
   const statsRef = useRef(null);
-  const cardRefs = useRef(new Map());
+  // تم إزالة cardRefs لأنه لم يعد ضرورياً
   const aboutControls = useAnimation();
   const servicesControls = useAnimation();
   const aboutInView = useInView(aboutRef, { once: true, amount: 0.1 });
   const servicesInView = useInView(servicesRef, { once: true, amount: 0.1 });
   const statsInView = useInView(statsRef, { once: true, amount: 0.3 });
 
+  // تم تبسيط الـ useEffect للتحكم بـ Framer Motion فقط
   useEffect(() => {
     if (aboutInView) {
       aboutControls.start('visible');
     }
     if (servicesInView) {
       servicesControls.start('visible');
-      Array.from(cardRefs.current.entries()).forEach(([index, card]) => {
-        setTimeout(() => {
-          card.classList.add('animate-card-reveal');
-          card.classList.remove('opacity-0', 'scale-95');
-        }, index * 100);
-      });
+      // تم حذف كود setTimeout والـ classList اليدوي
     }
   }, [aboutInView, servicesInView, aboutControls, servicesControls]);
 
+  // Framer Motion Variants بدون تغيير، لأنها جيدة وتستخدم Transform
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -214,14 +223,14 @@ const AboutUsSection = () => {
       transition: {
         duration: 0.8,
         ease: 'easeOut',
-        staggerChildren: 0.2,
-        delayChildren: 0.3
+        staggerChildren: 0.15, // تقليل الـ Staggering قليلاً لتحسين الأداء
+        delayChildren: 0.1 // تقليل التأخير العام
       }
     }
   };
 
   const childVariants = {
-    hidden: { opacity: 0, y: 50, scale: 0.8 },
+    hidden: { opacity: 0, y: 50, scale: 0.9 }, // استخدام Scale لتفعيل الـ GPU
     visible: {
       opacity: 1,
       y: 0,
@@ -264,7 +273,8 @@ const AboutUsSection = () => {
     <motion.div variants={childVariants} className="text-center mb-8 md:mb-16">
       <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-black text-white mb-4 md:mb-6 leading-tight">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-center lg:gap-4">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#18b5d5] to-[#0d8aa3] animate-pulse">
+          {/* تم إزالة animate-pulse من العنوان لتقليل الحمل المستمر */}
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#18b5d5] to-[#0d8aa3]">
             AfterAds
           </span>
           <span className="text-white">
@@ -312,7 +322,7 @@ const AboutUsSection = () => {
           <img
             src={logo}
             alt="After Ads – فريقنا المبدع"
-            className="w-full h-full object-cover rounded-2xl lg:rounded-3xl border border-[#18b5d5]/30 shadow-lg shadow-[#18b5d5]/20 hover:scale-105 transition-transform duration-500"
+            className="w-full h-full object-cover rounded-2xl lg:rounded-3xl border border-[#18b5d5]/30 shadow-lg shadow-[#18b5d5]/20 hover:scale-105 transition-transform duration-500 will-change-transform"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-[#18b5d5]/20 to-[#0d8aa3]/20 rounded-2xl lg:rounded-3xl blur-md opacity-80 hover:opacity-100 transition-opacity duration-500"></div>
         </div>
@@ -325,36 +335,38 @@ const AboutUsSection = () => {
         <section ref={servicesRef} data-section="services" className="py-24 bg-[#292929] relative overflow-hidden">
           <div className="absolute inset-0 backdrop-blur-3xl">
             <div className="absolute inset-0 bg-gradient-to-br from-[#292929]/80 via-[#333333]/80 to-[#292929]/80"></div>
-            <div className="absolute inset-0 opacity-20">
-              <div className="absolute top-10 left-10 text-[#18b5d5]/80 font-mono text-sm animate-float filter drop-shadow-[0_0_10px_rgba(24,181,213,0.4)]">
+            {/* إضافة كلاس لتوقيف هذا القسم على الموبايل */}
+            <div className="absolute inset-0 opacity-20 services-background-code"> 
+              <div className="absolute top-10 left-10 text-[#18b5d5]/80 font-mono text-sm animate-float filter drop-shadow-[0_0_10px_rgba(24,181,213,0.4)] will-change-transform">
                 &lt;section className="services"&gt;
               </div>
-              <div className="absolute top-40 right-20 text-[#18b5d5]/50 font-mono text-xs animate-float-delayed filter drop-shadow-[0_0_8px_rgba(24,181,213,0.3)]">
+              <div className="absolute top-40 right-20 text-[#18b5d5]/50 font-mono text-xs animate-float-delayed filter drop-shadow-[0_0_8px_rgba(24,181,213,0.3)] will-change-transform">
                 const services = () =&gt; {}
               </div>
-              <div className="absolute bottom-60 left-32 text-[#18b5d5]/70 font-mono text-sm animate-float-slow filter drop-shadow-[0_0_10px_rgba(24,181,213,0.4)]">
+              <div className="absolute bottom-60 left-32 text-[#18b5d5]/70 font-mono text-sm animate-float-slow filter drop-shadow-[0_0_10px_rgba(24,181,213,0.4)] will-change-transform">
                 useState([data, setData])
               </div>
-              <div className="absolute bottom-32 right-10 text-[#18b5d5]/40 font-mono text-xs animate-bounce-slow filter drop-shadow-[0_0_8px_rgba(24,181,213,0.3)]">
+              <div className="absolute bottom-32 right-10 text-[#18b5d5]/40 font-mono text-xs animate-bounce-slow filter drop-shadow-[0_0_8px_rgba(24,181,213,0.3)] will-change-transform">
                 API.optimize.SEO();
               </div>
-              <div className="absolute top-80 left-1/2 text-[#18b5d5]/60 font-mono text-sm animate-pulse filter drop-shadow-[0_0_10px_rgba(24,181,213,0.4)]">
+              <div className="absolute top-80 left-1/2 text-[#18b5d5]/60 font-mono text-sm animate-pulse filter drop-shadow-[0_0_10px_rgba(24,181,213,0.4)] will-change-transform">
                 fetch('/services').then()
               </div>
             </div>
-            <div className="absolute inset-0">
-              {[...Array(20)].map((_, i) => (
+            {/* إضافة كلاس لتوقيف هذا القسم على الموبايل، وتقليل عدد العناصر إلى 10 فقط للديسكتوب */}
+            <div className="absolute inset-0 services-background-bubbles"> 
+              {[...Array(10)].map((_, i) => ( // تم تقليل العدد من 20 إلى 10
                 <div
                   key={i}
                   className={`absolute w-2 h-2 bg-[#18b5d5]/60 rounded-full filter blur-md ${
                     i % 2 === 0 ? 'animate-pulse' : 'animate-ping'
-                  } drop-shadow-[0_0_15px_rgba(24,181,213,0.6)]`}
+                  } drop-shadow-[0_0_15px_rgba(24,181,213,0.6)] will-change-transform`}
                   style={{
                     left: `${Math.random() * 100}%`,
                     top: `${Math.random() * 100}%`,
-                    animationDelay: `${Math.random() * 2}s`,
-                    animationDuration: `${2 + Math.random() * 3}s`,
-                    opacity: Math.random() * 0.5 + 0.4
+                    animationDelay: `${Math.random() * 1}s`, // تقليل التأخير
+                    animationDuration: `${2 + Math.random() * 2}s`, // تقليل مدة الأنيميشن
+                    opacity: Math.random() * 0.4 + 0.3 // تقليل الـ Opacity
                   }}
                 />
               ))}
@@ -370,7 +382,8 @@ const AboutUsSection = () => {
             <motion.div variants={childVariants} className="text-center mb-8 lg:mb-16">
              
               <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl font-black text-white mb-3 lg:mb-6 leading-tight">
-                نحن <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#18b5d5] to-[#0d8aa3] animate-pulse">الخيار الأمثل</span> لمشروعك
+                {/* تم استبدال animate-pulse بالنسخة المحسنة لو كان ضروري، ولكن يفضل إزالته تماماً هنا */}
+                نحن <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#18b5d5] to-[#0d8aa3]">الخيار الأمثل</span> لمشروعك 
               </h2>
               <p className="text-sm sm:text-base md:text-lg lg:text-xl text-[#ffffff]/80 max-w-3xl mx-auto leading-relaxed font-light px-4">
                 نجمع بين الخبرة والإبداع لنقدم لك حلولاً تقنية متميزة تساعدك على تحقيق أهدافك
@@ -386,10 +399,10 @@ const AboutUsSection = () => {
                     variants={childVariants}
                     className="will-change-transform transition-all duration-700 group cursor-pointer flex-1"
                   >
-                    <div className="relative bg-[#ffffff]/10 backdrop-blur-lg border border-[#18b5d5]/30 rounded-xl lg:rounded-2xl p-3 lg:p-5 hover:border-[#18b5d5]/50 hover:shadow-[#18b5d5]/30 transition-all duration-500 hover:scale-105">
+                    <div className="relative bg-[#ffffff]/10 backdrop-blur-lg border border-[#18b5d5]/30 rounded-xl lg:rounded-2xl p-3 lg:p-5 hover:border-[#18b5d5]/50 hover:shadow-[#18b5d5]/30 transition-all duration-500 hover:scale-105 will-change-transform">
                       <div className="relative z-10 text-center">
                         <div className="relative mb-2 lg:mb-4 mx-auto w-fit">
-                          <div className="w-10 h-10 lg:w-14 lg:h-14 bg-[#ffffff]/10 backdrop-blur-md border border-[#18b5d5]/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                          <div className="w-10 h-10 lg:w-14 lg:h-14 bg-[#ffffff]/10 backdrop-blur-md border border-[#18b5d5]/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300 will-change-transform">
                             <IconComponent className="w-5 h-5 lg:w-7 lg:h-7 text-[#18b5d5] group-hover:text-white transition-colors duration-300" />
                           </div>
                         </div>
@@ -456,16 +469,23 @@ const AboutUsSection = () => {
                   منهجية احترافية مُحكمة من ست خطوات لضمان نجاح مشروعك وتحقيق رؤيتك
                 </p>
               </div>
-
-              <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 lg:gap-6">
+              
+              {/* تم تطبيق Framer Motion Staggering على الـ Steps */}
+              <motion.div
+                variants={containerVariants} // استخدم الـ Container Variants لتطبيق الـ Staggering
+                initial="hidden"
+                animate={servicesControls} // استخدم نفس الـ Controls
+                className="grid grid-cols-2 lg:grid-cols-6 gap-4 lg:gap-6"
+              >
                 {steps.map((step, index) => (
-                  <div
+                  <motion.div
                     key={index}
-                    ref={(el) => el && cardRefs.current.set(index + features.length + 4, el)}
-                    className="opacity-100 scale-100 will-change-transform transition-all duration-700 group cursor-pointer"
+                    variants={childVariants} // استخدام الـ Child Variants لتحريك كل خطوة بـ Transform/Opacity
+                    // تم إزالة ref والـ classList اليدوي
+                    className="will-change-transform transition-all duration-700 group cursor-pointer"
                   >
                     <div className="relative mb-4 lg:mb-6 z-10">
-                      <div className="w-20 h-20 lg:w-24 lg:h-24 xl:w-32 xl:h-32 bg-[#ffffff]/10 backdrop-blur-2xl border-2 border-[#18b5d5]/30 rounded-full flex flex-col items-center justify-center group-hover:bg-[#ffffff]/20 group-hover:border-[#18b5d5]/70 transition-all duration-500 group-hover:scale-105 group-hover:shadow-2xl group-hover:shadow-[#18b5d5]/40 mx-auto">
+                      <div className="w-20 h-20 lg:w-24 lg:h-24 xl:w-32 xl:h-32 bg-[#ffffff]/10 backdrop-blur-2xl border-2 border-[#18b5d5]/30 rounded-full flex flex-col items-center justify-center group-hover:bg-[#ffffff]/20 group-hover:border-[#18b5d5]/70 transition-all duration-500 group-hover:scale-105 group-hover:shadow-2xl group-hover:shadow-[#18b5d5]/40 mx-auto will-change-transform">
                         <span className="text-sm lg:text-lg xl:text-2xl font-black text-[#18b5d5] mb-1 group-hover:text-white transition-colors duration-300">
                           {step.number}
                         </span>
@@ -488,9 +508,9 @@ const AboutUsSection = () => {
                         ))}
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
 
 
             </motion.div>
