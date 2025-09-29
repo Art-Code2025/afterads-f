@@ -16,12 +16,13 @@ export default defineConfig({
   },
   optimizeDeps: {
     exclude: ['lucide-react'],
+    include: ['react', 'react-dom', 'framer-motion']
   },
   build: {
     // تحسين حجم الملفات وتقسيمها
     chunkSizeWarningLimit: 1000,
     // تحسين الأداء
-    target: 'esnext',
+    target: 'es2015',
     sourcemap: false,
     rollupOptions: {
       output: {
@@ -60,7 +61,11 @@ export default defineConfig({
           if (id.includes('Admin') || id.includes('Form')) {
             return 'admin-components';
           }
-        }
+        },
+        // إضافة ترتيب أفضل للـ chunks
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]'
       }
     },
     // تحسين CSS
