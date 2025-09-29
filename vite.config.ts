@@ -40,6 +40,9 @@ export default defineConfig({
             if (id.includes('react-toastify')) {
               return 'toast-vendor';
             }
+            if (id.includes('framer-motion')) {
+              return 'animation-vendor';
+            }
             // باقي المكتبات
             return 'vendor';
           }

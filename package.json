@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
+    "framer-motion": "^11.11.17",
     "gsap": "^3.13.0",
     "hls.js": "^1.6.11",
     "lodash": "^4.17.21",
