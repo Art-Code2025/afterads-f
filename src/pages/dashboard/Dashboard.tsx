@@ -6859,17 +6859,7 @@ className="block w-full text-center bg-gray-100 text-black px-3 py-2 rounded-lg 
       </div>
     </div>
 
-    {/* Search */}
-    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-      <div className="relative">
-        <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-        <input
-          type="text"
-          placeholder="البحث في التعليقات..."
-          className="w-full pr-12 pl-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 text-lg"
-        />
-      </div>
-    </div>
+    
 
     {/* Comments List */}
     <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
@@ -6947,16 +6937,10 @@ className="block w-full text-center bg-gray-100 text-black px-3 py-2 rounded-lg 
                   
                   {/* Action Buttons */}
                   <div className="flex flex-col gap-2 mr-2 sm:mr-4">
-                    <button
-                      onClick={() => handleViewComment(comment)}
-                      className="p-2 sm:p-3 bg-gray-800 text-white hover:bg-black rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
-                      title="عرض التفاصيل"
-                    >
-                      <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
-                    </button>
+
                     <button
                       onClick={() => handleDeleteComment(comment.id)}
-                      className="p-2 sm:p-3 bg-gray-600 text-white hover:bg-gray-800 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
+                  className="p-2 bg-gradient-to-r from-red-600 to-red-700 text-white hover:from-red-700 hover:to-red-800 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
                       title="حذف التعليق"
                     >
                       <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />

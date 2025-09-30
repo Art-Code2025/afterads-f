@@ -239,33 +239,90 @@ const ThemeDetail: React.FC = () => {
   }, [themeId]);
 
   const scrollToPurchaseSection = () => {
-    if (purchaseSectionRef.current) {
-      // Add small delay to ensure page is fully loaded
-      setTimeout(() => {
-        purchaseSectionRef.current?.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start',
-          inline: 'nearest'
-        });
-      }, 100);
-    }
+    const attemptScroll = (retryCount = 0) => {
+      if (purchaseSectionRef.current) {
+        // Check if element is actually rendered and visible
+        const element = purchaseSectionRef.current;
+        const rect = element.getBoundingClientRect();
+        
+        if (rect.height > 0 && rect.width > 0) {
+          // Element is ready, perform scroll
+          element.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+            inline: 'nearest'
+          });
+          
+          // Add highlight effect
+          element.style.transition = 'box-shadow 0.3s ease';
+          element.style.boxShadow = '0 0 20px rgba(24, 181, 216, 0.5)';
+          setTimeout(() => {
+            element.style.boxShadow = '';
+          }, 2000);
+        } else if (retryCount < 10) {
+          // Element not ready yet, retry with exponential backoff
+          setTimeout(() => attemptScroll(retryCount + 1), 200 * (retryCount + 1));
+        }
+      } else if (retryCount < 10) {
+        // Ref not ready yet, retry
+        setTimeout(() => attemptScroll(retryCount + 1), 200 * (retryCount + 1));
+      }
+    };
+    
+    // Start attempting to scroll
+    attemptScroll();
   };
 
-  // Scroll to top when component loads, then check for hash
+  // Handle initial page load and hash navigation
   useEffect(() => {
     if (theme) {
       // Check for hash and scroll to purchase section if needed
       if (window.location.hash === '#purchase') {
-        setTimeout(() => {
-          scrollToPurchaseSection();
-        }, 300); // Reduced delay
+        // Don't scroll to top if we need to scroll to purchase section
+        // Use requestAnimationFrame to ensure DOM is ready
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            scrollToPurchaseSection();
+          }, 100);
+        });
+      } else {
+        // Only scroll to top if there's no hash
+        window.scrollTo({ top: 0, behavior: 'instant' });
       }
     }
   }, [theme]);
 
-  // Also scroll to top when navigating to this page
+  // Handle hash changes after initial load
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    const handleHashChange = () => {
+      if (window.location.hash === '#purchase') {
+        scrollToPurchaseSection();
+      }
+    };
+
+    const handleWindowLoad = () => {
+      // Additional check after window is fully loaded
+      if (window.location.hash === '#purchase') {
+        setTimeout(() => {
+          scrollToPurchaseSection();
+        }, 100);
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    window.addEventListener('load', handleWindowLoad);
+    
+    // Also check if page is already loaded
+    if (document.readyState === 'complete' && window.location.hash === '#purchase') {
+      setTimeout(() => {
+        scrollToPurchaseSection();
+      }, 100);
+    }
+    
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+      window.removeEventListener('load', handleWindowLoad);
+    };
   }, []);
 
   const handleAddToCart = async () => {

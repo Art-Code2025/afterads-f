@@ -695,10 +695,7 @@ const Checkout: React.FC = () => {
                   </div>
                 )}
                 
-                <div className="flex justify-between text-gray-300 text-sm sm:text-base mobile-text">
-                  <span>رسوم التوصيل</span>
-                  <span className="text-green-400">مجاني</span>
-                </div>
+                
                 
                 <div className="flex justify-between text-white font-bold text-lg sm:text-xl border-t border-white/20 pt-2 sm:pt-3">
                   <span>المجموع الكلي</span>
