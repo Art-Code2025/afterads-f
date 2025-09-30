@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { smartToast } from '../utils/toastConfig';
 import { ShoppingCart, Star, MessageSquare, Play, Eye, Headphones, Settings, Palette, Store, Smartphone, Languages, Search, RefreshCcw, Gift, Plus, Minus, ChevronDown, ChevronUp, FileText } from 'lucide-react';
 import { gsap } from 'gsap';
@@ -66,6 +66,7 @@ interface Category {
 const ThemeDetail: React.FC = () => {
   const { id, slug } = useParams<{ id?: string; slug?: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const [theme, setTheme] = useState<Theme | null>(null);
   const [category, setCategory] = useState<Category | null>(null);
   const [quantity, setQuantity] = useState(1);
@@ -273,56 +274,25 @@ const ThemeDetail: React.FC = () => {
     attemptScroll();
   };
 
-  // Handle initial page load and hash navigation
+  // Handle initial page load and scroll to purchase via navigation state
   useEffect(() => {
     if (theme) {
-      // Check for hash and scroll to purchase section if needed
-      if (window.location.hash === '#purchase') {
-        // Don't scroll to top if we need to scroll to purchase section
-        // Use requestAnimationFrame to ensure DOM is ready
+      const shouldScroll = Boolean((location.state as any)?.scrollToPurchase);
+      if (shouldScroll) {
         requestAnimationFrame(() => {
           setTimeout(() => {
             scrollToPurchaseSection();
           }, 100);
         });
       } else {
-        // Only scroll to top if there's no hash
-        window.scrollTo({ top: 0, behavior: 'instant' });
+        window.scrollTo({ top: 0, behavior: 'auto' });
       }
     }
-  }, [theme]);
+  }, [theme, location.state]);
 
-  // Handle hash changes after initial load
+  // Disabled: hash-based scrolling (prevent footer flash)
   useEffect(() => {
-    const handleHashChange = () => {
-      if (window.location.hash === '#purchase') {
-        scrollToPurchaseSection();
-      }
-    };
-
-    const handleWindowLoad = () => {
-      // Additional check after window is fully loaded
-      if (window.location.hash === '#purchase') {
-        setTimeout(() => {
-          scrollToPurchaseSection();
-        }, 100);
-      }
-    };
-
-    window.addEventListener('hashchange', handleHashChange);
-    window.addEventListener('load', handleWindowLoad);
-    
-    // Also check if page is already loaded
-    if (document.readyState === 'complete' && window.location.hash === '#purchase') {
-      setTimeout(() => {
-        scrollToPurchaseSection();
-      }, 100);
-    }
-    
-    return () => {
-      window.removeEventListener('hashchange', handleHashChange);
-      window.removeEventListener('load', handleWindowLoad);
-    };
+    return () => {};
   }, []);
 
   const handleAddToCart = async () => {

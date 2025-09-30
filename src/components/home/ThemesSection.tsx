@@ -51,7 +51,7 @@ const ThemeCard: React.FC<ThemeCardProps> = ({ theme, viewMode }) => {
   }, []);
 
   const handleAddToCart = () => {
-    navigate(`/theme/${theme.id}#purchase`);
+    navigate(`/theme/${theme.id}`, { state: { scrollToPurchase: true } });
   };
 
   return (
