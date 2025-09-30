@@ -2931,7 +2931,7 @@ const Dashboard: React.FC = () => {
 
 
         {/* Navigation Menu */}
-        <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
+        <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto hide-scrollbar">
           {/* Dashboard Overview - Admin Only */}
           {currentUser?.role === 'admin' && (
             <div className="mb-6">
@@ -3268,7 +3268,7 @@ const Dashboard: React.FC = () => {
         </div>
         
         {/* Mobile Navigation */}
-        <nav className="flex-1 p-4 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
+        <nav className="flex-1 p-4 overflow-y-auto hide-scrollbar">
           <div className="space-y-4">
             {/* Dashboard Overview - Admin Only */}
             {currentUser?.role === 'admin' && (
