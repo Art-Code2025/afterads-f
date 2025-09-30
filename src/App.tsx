@@ -24,6 +24,7 @@ import FAQSection from './components/home/FAQSection';
 import ContactSection from './components/home/ContactSection';
 import { createCategorySlug, createProductSlug } from './utils/slugify';
 import { addToCartUnified, addToWishlistUnified, removeFromWishlistUnified } from './utils/cartUtils';
+import { isMobileDevice } from './utils/deviceDetection';
 
 interface Product {
   id: number;
@@ -153,6 +154,14 @@ const App: React.FC = () => {
   useEffect(() => {
     const loadAllData = async () => {
       try {
+        // التحقق من نوع الجهاز
+        const isMobile = isMobileDevice();
+        
+        // إذا كان الجهاز محمول، إخفاء شاشة التحميل فوراً
+        if (isMobile) {
+          setIsLoading(false);
+        }
+        
         // تحميل البيانات
         await Promise.all([
           fetchCategoryProducts(),
@@ -162,39 +171,41 @@ const App: React.FC = () => {
         ]);
         loadWishlistFromStorage();
         
-        // تحميل الصور المهمة مسبقاً
-        const preloadImages = () => {
-          return new Promise<void>((resolve) => {
-            let loadedCount = 0;
-            const imagesToPreload = [
-              '/logo.png',
-              // يمكن إضافة صور أخرى مهمة هنا
-            ];
-            
-            if (imagesToPreload.length === 0) {
-              resolve();
-              return;
-            }
-            
-            imagesToPreload.forEach((src) => {
-              const img = new Image();
-              img.onload = img.onerror = () => {
-                loadedCount++;
-                if (loadedCount === imagesToPreload.length) {
-                  resolve();
-                }
-              };
-              img.src = src;
+        // تحميل الصور المهمة مسبقاً (فقط للأجهزة الكبيرة)
+        if (!isMobile) {
+          const preloadImages = () => {
+            return new Promise<void>((resolve) => {
+              let loadedCount = 0;
+              const imagesToPreload = [
+                '/logo.png',
+                // يمكن إضافة صور أخرى مهمة هنا
+              ];
+              
+              if (imagesToPreload.length === 0) {
+                resolve();
+                return;
+              }
+              
+              imagesToPreload.forEach((src) => {
+                const img = new Image();
+                img.onload = img.onerror = () => {
+                  loadedCount++;
+                  if (loadedCount === imagesToPreload.length) {
+                    resolve();
+                  }
+                };
+                img.src = src;
+              });
             });
-          });
-        };
-        
-        await preloadImages();
-        
-        // إخفاء شاشة التحميل بعد تحميل جميع البيانات والصور
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 300); // تأخير قصير للانتقال السلس
+          };
+          
+          await preloadImages();
+          
+          // إخفاء شاشة التحميل بعد تحميل جميع البيانات والصور (فقط للأجهزة الكبيرة)
+          setTimeout(() => {
+            setIsLoading(false);
+          }, 300); // تأخير قصير للانتقال السلس
+        }
       } catch (error) {
         console.error('Error loading data:', error);
         setIsLoading(false);

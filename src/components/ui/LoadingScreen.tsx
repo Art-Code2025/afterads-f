@@ -1,14 +1,16 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLoading } from '../../contexts/LoadingContext';
+import { isDesktopDevice } from '../../utils/deviceDetection';
 import logo from '../../assets/logo.webp';
 
 const LoadingScreen: React.FC = () => {
   const { isLoading } = useLoading();
+  const isDesktop = isDesktopDevice();
 
   return (
     <AnimatePresence>
-      {isLoading && (
+      {isLoading && isDesktop && (
         <motion.div 
           className="fixed inset-0 flex items-center justify-center bg-[#292929] overflow-hidden"
           style={{ zIndex: 9999 }}
