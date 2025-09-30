@@ -151,12 +151,58 @@ const App: React.FC = () => {
   }, [slides.length]);
 
   useEffect(() => {
-    fetchCategoryProducts();
-    fetchStaticPages();
-    fetchTestimonials();
-    fetchClients();
-    loadWishlistFromStorage();
-  }, []);
+    const loadAllData = async () => {
+      try {
+        // تحميل البيانات
+        await Promise.all([
+          fetchCategoryProducts(),
+          fetchStaticPages(),
+          fetchTestimonials(),
+          fetchClients()
+        ]);
+        loadWishlistFromStorage();
+        
+        // تحميل الصور المهمة مسبقاً
+        const preloadImages = () => {
+          return new Promise<void>((resolve) => {
+            let loadedCount = 0;
+            const imagesToPreload = [
+              '/logo.png',
+              // يمكن إضافة صور أخرى مهمة هنا
+            ];
+            
+            if (imagesToPreload.length === 0) {
+              resolve();
+              return;
+            }
+            
+            imagesToPreload.forEach((src) => {
+              const img = new Image();
+              img.onload = img.onerror = () => {
+                loadedCount++;
+                if (loadedCount === imagesToPreload.length) {
+                  resolve();
+                }
+              };
+              img.src = src;
+            });
+          });
+        };
+        
+        await preloadImages();
+        
+        // إخفاء شاشة التحميل بعد تحميل جميع البيانات والصور
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 300); // تأخير قصير للانتقال السلس
+      } catch (error) {
+        console.error('Error loading data:', error);
+        setIsLoading(false);
+      }
+    };
+
+    loadAllData();
+  }, [setIsLoading]);
 
   useEffect(() => {
   console.log("Home Mounted");

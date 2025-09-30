@@ -1,29 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLoading } from '../../contexts/LoadingContext';
 import logo from '../../assets/logo.webp';
 
 const LoadingScreen: React.FC = () => {
-  const { setIsLoading } = useLoading();
-  const [isExiting, setIsExiting] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsExiting(true);
-      // Wait for exit animation to complete before hiding loading screen
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 800);
-    }, 1000);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [setIsLoading]);
+  const { isLoading } = useLoading();
 
   return (
     <AnimatePresence>
-      {!isExiting && (
+      {isLoading && (
         <motion.div 
           className="fixed inset-0 flex items-center justify-center bg-[#292929] overflow-hidden"
           style={{ zIndex: 9999 }}
