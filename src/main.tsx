@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'r
 import { HelmetProvider } from 'react-helmet-async';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { LoadingProvider, useLoading } from './contexts/LoadingContext';
 import Navbar from './components/layout/Navbar';
 import GlobalFooter from './components/layout/GlobalFooter';
 import CustomCursor from './components/ui/CustomCursor';
@@ -69,19 +70,20 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 // مكون للتحكم في النافبار والفوتر والـ padding
 const LayoutWrapper: React.FC = () => {
   const location = useLocation();
+  const { isLoading } = useLoading();
   const [showCartNotification, setShowCartNotification] = React.useState(false);
   const [notificationProduct, setNotificationProduct] = React.useState<any>(null);
   const [notificationQuantity, setNotificationQuantity] = React.useState(1);
   const hideNavbarPaths = ['/login', '/admin', '/checkout', '/thank-you'];
   const hideFooterPaths = ['/login', '/admin', '/checkout', '/thank-you'];
 
-  // التحقق إذا المسار الحالي هو /login أو /checkout أو بيبدأ بـ /admin
-  const shouldHideNavbar = hideNavbarPaths.some(path => 
+  // التحقق إذا المسار الحالي هو /login أو /checkout أو بيبدأ بـ /admin أو أثناء التحميل
+  const shouldHideNavbar = isLoading || hideNavbarPaths.some(path => 
     path === '/login' || path === '/checkout' ? location.pathname === path : location.pathname.startsWith(path)
   );
 
-  // التحقق إذا المسار الحالي يجب إخفاء الفوتر فيه
-  const shouldHideFooter = hideFooterPaths.some(path => 
+  // التحقق إذا المسار الحالي يجب إخفاء الفوتر فيه أو أثناء التحميل
+  const shouldHideFooter = isLoading || hideFooterPaths.some(path => 
     path === '/login' || path === '/checkout' ? location.pathname === path : location.pathname.startsWith(path)
   );
 
@@ -210,8 +212,10 @@ root.render(
           v7_relativeSplatPath: true
         }}
       >
-        <ScrollToTop />
-        <LayoutWrapper />
+        <LoadingProvider>
+          <ScrollToTop />
+          <LayoutWrapper />
+        </LoadingProvider>
 
         <ToastContainer 
         position="top-center"

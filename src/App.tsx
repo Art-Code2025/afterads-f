@@ -12,6 +12,8 @@ import { apiCall, API_ENDPOINTS, buildImageUrl } from './config/api';
 import WhatsAppButton from './components/ui/WhatsAppButton';
 import ScrollProgressIndicator from './components/ui/ScrollProgressIndicator';
 import ScrollToTopButton from './components/ui/ScrollToTopButton';
+import LoadingScreen from './components/ui/LoadingScreen';
+import { useLoading } from './contexts/LoadingContext';
 import HeroSection from './components/home/HeroSection';
 import CategoriesSection from './components/home/CategoriesSection';
 import AboutUsSection from './components/home/AboutUsSection';
@@ -95,6 +97,7 @@ interface Client {
 }
 
 const App: React.FC = () => {
+  const { isLoading, setIsLoading } = useLoading();
   const [categoryProducts, setCategoryProducts] = useState<CategoryProducts[]>([]);
   const [themes, setThemes] = useState<Theme[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -478,6 +481,11 @@ const App: React.FC = () => {
         </div>
       </div>
     );
+  }
+
+  // Show loading screen first
+  if (isLoading) {
+    return <LoadingScreen />;
   }
 
   return (

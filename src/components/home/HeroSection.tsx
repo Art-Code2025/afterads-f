@@ -1,18 +1,33 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import hero from '../../assets/her.mp4';
+import heroImage from '../../assets/hero.webp';
 
 const HeroSection: React.FC = () => {
+  const [videoLoaded, setVideoLoaded] = useState(false);
+
   return (
     <section className="relative h-screen w-full overflow-hidden">
+      {/* Background Placeholder Image */}
+      <div 
+        className={`absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat z-0 transition-opacity duration-500 ${
+          videoLoaded ? 'opacity-0' : 'opacity-100'
+        }`}
+        style={{ backgroundImage: `url(${heroImage})` }}
+      />
+      
       {/* فيديو الهيرو يغطي السيكشن بالكامل */}
       <video
         autoPlay
         muted
         loop
         playsInline
-        className="absolute inset-0 w-full h-full object-cover"
+        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
+          videoLoaded ? 'opacity-100' : 'opacity-0'
+        }`}
         src={hero}
+        onLoadedData={() => setVideoLoaded(true)}
+        onCanPlay={() => setVideoLoaded(true)}
       />
 
       {/* طبقة overlay متدرجة */}
