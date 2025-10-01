@@ -1325,7 +1325,7 @@ const Dashboard: React.FC = () => {
       generateSalesData();
       generateDailySalesData();
     }
-    if (orders.length > 0 && customers.length > 0) {
+    if (orders.length > 0 && customers.length > 0) { 
       generateVisitorStats();
     }
   }, [orders, products, customers]);
@@ -5895,11 +5895,11 @@ className="block w-full text-center bg-gray-100 text-black px-3 py-2 rounded-lg 
                   </div>
                   <div className="text-sm">
                     <div className="flex justify-between mb-1">
-                      <span className="text-gray-600">الإجمالي:</span>
+                      <span className="text-gray-600"> إجمالي المبيعات :</span>
                       <span className="font-medium text-black">{stats.totalRevenue.toFixed(0)} ر.س</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">متوسط الطلب:</span>
+                      <span className="text-gray-600">متوسط الطلب :</span>
                       <span className="font-medium text-black">{stats.averageOrderValue.toFixed(0)} ر.س</span>
                     </div>
                   </div>
@@ -6420,7 +6420,6 @@ className="block w-full text-center bg-gray-100 text-black px-3 py-2 rounded-lg 
               <th className="text-right py-3 px-4 font-semibold text-gray-700">الخدمة المطلوبة</th>
               <th className="text-center py-3 px-4 font-semibold text-gray-700">الحالة</th>
               <th className="text-center py-3 px-4 font-semibold text-gray-700">التاريخ</th>
-              <th className="text-center py-3 px-4 font-semibold text-gray-700">الإجراءات</th>
             </tr>
           </thead>
           <tbody>
@@ -6445,6 +6444,18 @@ className="block w-full text-center bg-gray-100 text-black px-3 py-2 rounded-lg 
                       <p className="text-gray-500">لا توجد خدمات</p>
                     )}
                   </div>
+                </td>
+                <td className="py-4 px-4 text-center">
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                    order.status === 'confirmed' ? 'bg-blue-100 text-blue-800' :
+                    order.status === 'preparing' ? 'bg-orange-100 text-orange-800' :
+                    order.status === 'delivered' ? 'bg-green-100 text-green-800' :
+                    order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                    'bg-gray-100 text-gray-800'
+                  }`}>
+                    {getOrderStatusText(order.status)}
+                  </span>
                 </td>
                 <td className="py-4 px-4 text-center">
                   <span className="text-sm text-gray-500">
@@ -6605,21 +6616,21 @@ className="block w-full text-center bg-gray-100 text-black px-3 py-2 rounded-lg 
 
   {/* المحتوى */}
   <div className="p-6 grid grid-cols-1 gap-3">
-    <Link
-      to="/admin/product/add"
+    <button
+      onClick={() => setShowProductModal(true)}
       className="flex items-center justify-center bg-gray-600 text-white py-3 rounded-lg hover:bg-gray-800 transition-colors font-medium"
     >
       <Plus className="w-5 h-5 ml-2" />
       إضافة خدمة
-    </Link>
+    </button>
 
-    <Link
-      to="/admin/category/add"
+    <button
+      onClick={() => setShowCategoryModal(true)}
       className="flex items-center justify-center bg-gray-100 text-gray-700 py-3 rounded-lg hover:bg-gray-200 transition-colors font-medium"
     >
       <Grid className="w-5 h-5 ml-2" />
       إضافة تصنيف
-    </Link>
+    </button>
 
     <button
       onClick={handleAddBlogPost}

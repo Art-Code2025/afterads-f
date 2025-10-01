@@ -437,11 +437,13 @@ const ThankYou: React.FC = () => {
                                 <p className="text-[#18b5d8] font-bold text-sm sm:text-lg">
                                   {(item.basePrice || item.price).toLocaleString()} ر.س × {item.quantity}
                                 </p>
-                                {item.addOnsPrice && item.addOnsPrice > 0 && (
-                                  <p className="text-green-400 font-medium text-xs sm:text-sm">
-                                    + خدمات إضافية: {item.addOnsPrice.toLocaleString()} ر.س
-                                  </p>
-                                )}
+                              {(item.addOnsPrice ?? 0) > 0 && (
+  <p className="text-green-400 font-medium text-xs sm:text-sm">
+    + خدمات إضافية: {(item.addOnsPrice ?? 0).toLocaleString()} ر.س
+  </p>
+)}
+
+
                               </div>
                               <div className="text-left">
                                 <p className="text-xs sm:text-sm text-gray-400 mb-1">الإجمالي</p>
@@ -528,91 +530,91 @@ const ThankYou: React.FC = () => {
             </div>
 
             {/* Order Timeline */}
-            <div className="bg-white/5 backdrop-blur-2xl rounded-2xl sm:rounded-3xl shadow-2xl border border-white/20 p-4 sm:p-8">
-              <h3 className="text-lg sm:text-2xl font-black text-white mb-4 sm:mb-8 flex items-center">
-                <Clock className="w-5 h-5 sm:w-7 sm:h-7 text-[#18b5d8] ml-2 sm:ml-3" />
-                مراحل معالجة طلبك
-              </h3>
-              
-              {order && (
-                <div className="relative">
-                  {(() => {
-                    const stageInfo = getOrderStageInfo(order.status);
-                    const completedStages = stageInfo.filter(stage => stage.isCompleted).length;
-                    const progressHeight = completedStages > 0 ? `${(completedStages - 1) * 25 + 12}%` : '12%';
-                    
-                    return (
-                      <>
-                        {/* Progress Line Background */}
-                        <div className="absolute right-[18px] sm:right-[26px] top-[20px] sm:top-[24px] bottom-[20px] sm:bottom-[24px] w-0.5 sm:w-1 bg-white/20 rounded-full"></div>
-                        {/* Active Progress Line */}
-                        <div 
-                          className="absolute right-[18px] sm:right-[26px] top-[20px] sm:top-[24px] w-0.5 sm:w-1 bg-gradient-to-b from-[#18b5d8] to-[#16a2c7] rounded-full shadow-lg transition-all duration-1000 ease-out"
-                          style={{ height: progressHeight }}
-                        ></div>
-                        
-                        <div className="space-y-4 sm:space-y-8">
-                          {stageInfo.map((stage) => {
-                            const Icon = stage.icon;
-                            
-                            return (
-                              <div 
-                                key={stage.key}
-                                className={`flex items-center gap-3 sm:gap-6 relative transition-all duration-500 ${
-                                  stage.isCompleted ? 'opacity-100' : 
-                                  stage.isCurrent ? 'opacity-80' : 'opacity-40'
-                                }`}
-                              >
-                                <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shadow-xl z-10 transition-all duration-500 ${
-                                  stage.isCompleted 
-                                    ? 'bg-gradient-to-r from-[#18b5d8] to-[#16a2c7]' 
-                                    : stage.isCurrent
-                                    ? 'bg-white/20 border-2 border-[#18b5d8]'
-                                    : 'bg-white/10 border border-white/20'
-                                }`}>
-                                  <Icon className={`w-5 h-5 sm:w-6 sm:h-6 transition-colors duration-500 ${
-                                    stage.isCompleted 
-                                      ? 'text-white' 
-                                      : stage.isCurrent
-                                      ? 'text-[#18b5d8]'
-                                      : 'text-white/60'
-                                  }`} />
-                                </div>
-                                <div>
-                                  <h4 className={`font-black text-sm sm:text-lg transition-colors duration-500 ${
-                                    stage.isCompleted 
-                                      ? 'text-white' 
-                                      : stage.isCurrent
-                                      ? 'text-white'
-                                      : 'text-white/60'
-                                  }`}>
-                                    {stage.label}
-                                    {stage.isCurrent && (
-                                      <span className="mr-2 text-[#18b5d8] text-xs sm:text-sm font-normal">
-                                        (الحالة الحالية)
-                                      </span>
-                                    )}
-                                  </h4>
-                                  <p className={`text-xs sm:text-base transition-colors duration-500 ${
-                                    stage.isCompleted 
-                                      ? 'text-gray-300' 
-                                      : stage.isCurrent
-                                      ? 'text-gray-300'
-                                      : 'text-gray-400'
-                                  }`}>
-                                    {stage.description}
-                                  </p>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </>
-                    );
-                  })()}
-                </div>
-              )}
+<div className="bg-white/5 backdrop-blur-2xl rounded-2xl sm:rounded-3xl shadow-2xl border border-white/20 p-4 sm:p-8">
+  <h3 className="text-lg sm:text-2xl font-black text-white mb-4 sm:mb-8 flex items-center">
+    <Clock className="w-5 h-5 sm:w-7 sm:h-7 text-[#18b5d8] ml-2 sm:ml-3" />
+    مراحل معالجة طلبك
+  </h3>
+  
+  {order && (
+    <div className="relative">
+      {(() => {
+        const stageInfo = getOrderStageInfo(order.status);
+        const completedStages = stageInfo.filter(stage => stage.isCompleted).length;
+        const progressHeight = completedStages > 0 ? `${(completedStages - 1) * 25 + 12}%` : '12%';
+        
+        return (
+          <>
+            {/* Progress Line Background */}
+            <div className="absolute right-[18px] sm:right-[26px] top-[20px] sm:top-[24px] bottom-[20px] sm:bottom-[24px] w-0.5 sm:w-1 bg-white/20 rounded-full -z-10"></div>
+            {/* Active Progress Line */}
+            <div 
+              className="absolute right-[18px] sm:right-[26px] top-[20px] sm:top-[24px] w-0.5 sm:w-1 bg-gradient-to-b from-[#18b5d8] to-[#16a2c7] rounded-full shadow-lg transition-all duration-1000 ease-out -z-10"
+              style={{ height: progressHeight }}
+            ></div>
+             
+            <div className="space-y-4 sm:space-y-8">
+              {stageInfo.map((stage) => {
+                const Icon = stage.icon;
+                
+                return (
+                  <div 
+                    key={stage.key}
+                    className={`flex items-center gap-3 sm:gap-6 transition-all duration-500 ${
+                      stage.isCompleted ? 'opacity-100' : 
+                      stage.isCurrent ? 'opacity-80' : 'opacity-40'
+                    }`}
+                  >
+                    <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shadow-xl relative transition-all duration-500 ${
+                      stage.isCompleted 
+                        ? 'bg-gradient-to-r from-[#18b5d8] to-[#16a2c7]' 
+                        : stage.isCurrent
+                        ? 'bg-white/20 border-2 border-[#18b5d8]'
+                        : 'bg-white/10 border border-white/20'
+                    }`}>
+                      <Icon className={`w-5 h-5 sm:w-6 sm:h-6 transition-colors duration-500 ${
+                        stage.isCompleted 
+                          ? 'text-white' 
+                          : stage.isCurrent
+                          ? 'text-[#18b5d8]'
+                          : 'text-white/60'
+                      }`} />
+                    </div>
+                    <div>
+                      <h4 className={`font-black text-sm sm:text-lg transition-colors duration-500 ${
+                        stage.isCompleted 
+                          ? 'text-white' 
+                          : stage.isCurrent
+                          ? 'text-white'
+                          : 'text-white/60'
+                      }`}>
+                        {stage.label}
+                        {stage.isCurrent && (
+                          <span className="mr-2 text-[#18b5d8] text-xs sm:text-sm font-normal">
+                            (الحالة الحالية)
+                          </span>
+                        )}
+                      </h4>
+                      <p className={`text-xs sm:text-base transition-colors duration-500 ${
+                        stage.isCompleted 
+                          ? 'text-gray-300' 
+                          : stage.isCurrent
+                          ? 'text-gray-300'
+                          : 'text-gray-400'
+                      }`}>
+                        {stage.description}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
+          </>
+        );
+      })()}
+    </div>
+  )}
+</div>
           </div>
 
           {/* Sidebar - Enhanced */}
