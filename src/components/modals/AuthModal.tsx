@@ -202,9 +202,9 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess }
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" dir="rtl">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-2 md:p-4 bg-black/70 backdrop-blur-sm" dir="rtl">
       {/* Modal */}
-      <div className="relative bg-[#292929] rounded-3xl shadow-2xl w-full max-w-md mx-auto overflow-hidden transform transition-all duration-500 border border-[#18b5d8]/30 hover:border-[#18b5d8]/50 hover:shadow-[0_0_20px_rgba(24,181,216,0.5)]">
+      <div className="relative bg-[#292929] rounded-2xl md:rounded-3xl shadow-2xl w-full max-w-xs md:max-w-md mx-auto overflow-hidden transform transition-all duration-500 border border-[#18b5d8]/30 hover:border-[#18b5d8]/50 hover:shadow-[0_0_20px_rgba(24,181,216,0.5)]">
         {/* Animated Background Pattern */}
         <div className="absolute inset-0 opacity-5">
           <div className="absolute inset-0 bg-gradient-to-br from-[#18b5d8] via-transparent to-[#16a2c7]"></div>
@@ -240,48 +240,48 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess }
         </style>
 
         {/* Header */}
-        <div className="relative bg-gradient-to-r from-[#18b5d8] to-[#16a2c7] p-6 text-center">
+        <div className="relative bg-gradient-to-r from-[#18b5d8] to-[#16a2c7] p-4 md:p-6 text-center">
           <button
             onClick={onClose}
-            className="absolute top-4 left-4 w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white hover:bg-white/30 transition-all duration-300"
+            className="absolute top-2 md:top-4 left-2 md:left-4 w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/20 flex items-center justify-center text-white hover:bg-white/30 transition-all duration-300"
             aria-label="إغلاق النافذة"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4 md:w-5 md:h-5" />
           </button>
           
-          <div className="relative w-16 h-16 mx-auto mb-4">
+          <div className="relative w-12 h-12 md:w-16 md:h-16 mx-auto mb-3 md:mb-4">
             <div className="absolute -inset-2 bg-gradient-to-br from-[#18b5d8]/30 to-[#16a2c7]/30 blur-sm transition-all duration-500" style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }}></div>
             <div className="absolute inset-0 bg-gradient-to-br from-[#18b5d8]/20 to-[#16a2c7]/10 backdrop-blur-md border border-[#18b5d8]/30 transition-all duration-500" style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }}></div>
             <div className="absolute inset-2 bg-gradient-to-br from-[#18b5d8]/15 to-transparent transition-all duration-700" style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }}></div>
-            <User className="absolute inset-0 m-auto w-8 h-8 text-white animate-[glow_3.5s_ease-in-out_infinite]" />
+            <User className="absolute inset-0 m-auto w-6 h-6 md:w-8 md:h-8 text-white animate-[glow_3.5s_ease-in-out_infinite]" />
           </div>
           
-          <h2 className="text-2xl font-black text-white mb-2">
+          <h2 className="text-lg md:text-2xl font-black text-white mb-1 md:mb-2">
             {isLogin ? 'تسجيل الدخول' : 'إنشاء حساب جديد'}
           </h2>
           
-          <p className="text-white/90 text-sm max-w-xs mx-auto">
+          <p className="text-white/90 text-xs md:text-sm max-w-xs mx-auto">
             {isLogin ? 'أدخل بيانات حسابك للدخول' : 'أكمل بياناتك لإنشاء حسابك الجديد'}
           </p>
         </div>
 
         {/* Content */}
-        <div className="p-6 space-y-6 relative z-10">
+        <div className="p-3 md:p-6 space-y-3 md:space-y-6 relative z-10">
           {/* Login Form */}
           {isLogin && (
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               {/* Email Field */}
               <div>
-                <label className="block text-sm font-bold text-gray-300 mb-2">
+                <label className="block text-xs md:text-sm font-bold text-gray-300 mb-1 md:mb-2">
                   البريد الإلكتروني
                 </label>
                 <div className="relative">
-                  <Mail className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#18b5d8] w-5 h-5" />
+                  <Mail className="absolute right-2 md:right-3 top-1/2 transform -translate-y-1/2 text-[#18b5d8] w-4 h-4 md:w-5 md:h-5" />
                   <input
                     type="email"
                     value={userData.email}
                     onChange={(e) => setUserData({ ...userData, email: e.target.value })}
-                    className={`w-full pr-12 pl-4 py-3 bg-white/5 backdrop-blur-md border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#18b5d8] transition-all text-white placeholder-gray-400 ${
+                    className={`w-full pr-8 md:pr-12 pl-3 md:pl-4 py-2 md:py-3 bg-white/5 backdrop-blur-md border rounded-lg md:rounded-xl focus:outline-none focus:ring-2 focus:ring-[#18b5d8] transition-all text-white placeholder-gray-400 text-sm md:text-base ${
                       errors.email ? 'border-red-500' : 'border-[#18b5d8]/30'
                     }`}
                     placeholder="example@email.com"
@@ -289,8 +289,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess }
                   />
                 </div>
                 {errors.email && (
-                  <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
-                    <AlertCircle className="w-4 h-4" />
+                  <p className="text-red-400 text-xs md:text-sm mt-1 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3 md:w-4 md:h-4" />
                     {errors.email}
                   </p>
                 )}
@@ -298,16 +298,16 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess }
 
               {/* Password Field */}
               <div>
-                <label className="block text-sm font-bold text-gray-300 mb-2">
+                <label className="block text-xs md:text-sm font-bold text-gray-300 mb-1 md:mb-2">
                   كلمة المرور
                 </label>
                 <div className="relative">
-                  <Lock className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#18b5d8] w-5 h-5" />
+                  <Lock className="absolute right-2 md:right-3 top-1/2 transform -translate-y-1/2 text-[#18b5d8] w-4 h-4 md:w-5 md:h-5" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={userData.password}
                     onChange={(e) => setUserData({ ...userData, password: e.target.value })}
-                    className={`w-full pr-12 pl-12 py-3 bg-white/5 backdrop-blur-md border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#18b5d8] transition-all text-white placeholder-gray-400 ${
+                    className={`w-full pr-8 md:pr-12 pl-8 md:pl-12 py-2 md:py-3 bg-white/5 backdrop-blur-md border rounded-lg md:rounded-xl focus:outline-none focus:ring-2 focus:ring-[#18b5d8] transition-all text-white placeholder-gray-400 text-sm md:text-base ${
                       errors.password ? 'border-red-500' : 'border-[#18b5d8]/30'
                     }`}
                     placeholder="كلمة المرور"
@@ -315,14 +315,14 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess }
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#18b5d8] hover:text-[#16a2c7]"
+                    className="absolute left-2 md:left-3 top-1/2 transform -translate-y-1/2 text-[#18b5d8] hover:text-[#16a2c7]"
                   >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    {showPassword ? <EyeOff className="w-4 h-4 md:w-5 md:h-5" /> : <Eye className="w-4 h-4 md:w-5 md:h-5" />}
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
-                    <AlertCircle className="w-4 h-4" />
+                  <p className="text-red-400 text-xs md:text-sm mt-1 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3 md:w-4 md:h-4" />
                     {errors.password}
                   </p>
                 )}
@@ -330,9 +330,9 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess }
 
               {/* General Error */}
               {errors.general && (
-                <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4">
-                  <p className="text-red-400 text-sm flex items-center gap-2">
-                    <AlertCircle className="w-5 h-5" />
+                <div className="bg-red-500/10 border border-red-500/30 rounded-lg md:rounded-xl p-2 md:p-4">
+                  <p className="text-red-400 text-xs md:text-sm flex items-center gap-1 md:gap-2">
+                    <AlertCircle className="w-3 h-3 md:w-5 md:h-5" />
                     {errors.general}
                   </p>
                 </div>
@@ -343,12 +343,12 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess }
                 type="button"
                 onClick={handleLogin}
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-[#18b5d8] to-[#16a2c7] text-white py-4 rounded-2xl font-black text-lg hover:from-[#16a2c7] hover:to-[#18b5d8] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 transform flex items-center justify-center gap-2"
+                className="w-full bg-gradient-to-r from-[#18b5d8] to-[#16a2c7] text-white py-2.5 md:py-4 rounded-xl md:rounded-2xl font-black text-sm md:text-lg hover:from-[#16a2c7] hover:to-[#18b5d8] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 transform flex items-center justify-center gap-1 md:gap-2"
                 aria-label="تسجيل الدخول"
               >
                 {loading ? (
                   <>
-                    <Loader className="w-5 h-5 animate-spin" />
+                    <Loader className="w-4 h-4 md:w-5 md:h-5 animate-spin" />
                     <span>جاري تسجيل الدخول...</span>
                   </>
                 ) : (
@@ -360,19 +360,19 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess }
 
           {/* Registration Form */}
           {!isLogin && (
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               {/* Email Field */}
               <div>
-                <label className="block text-sm font-bold text-gray-300 mb-2">
+                <label className="block text-xs md:text-sm font-bold text-gray-300 mb-1 md:mb-2">
                   البريد الإلكتروني
                 </label>
                 <div className="relative">
-                  <Mail className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#18b5d8] w-5 h-5" />
+                  <Mail className="absolute right-2 md:right-3 top-1/2 transform -translate-y-1/2 text-[#18b5d8] w-4 h-4 md:w-5 md:h-5" />
                   <input
                     type="email"
                     value={userData.email}
                     onChange={(e) => setUserData({ ...userData, email: e.target.value })}
-                    className={`w-full pr-12 pl-4 py-3 bg-white/5 backdrop-blur-md border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#18b5d8] transition-all text-white placeholder-gray-400 ${
+                    className={`w-full pr-8 md:pr-12 pl-3 md:pl-4 py-2 md:py-3 bg-white/5 backdrop-blur-md border rounded-lg md:rounded-xl focus:outline-none focus:ring-2 focus:ring-[#18b5d8] transition-all text-white placeholder-gray-400 text-sm md:text-base ${
                       errors.email ? 'border-red-500' : 'border-[#18b5d8]/30'
                     }`}
                     placeholder="example@email.com"
@@ -380,8 +380,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess }
                   />
                 </div>
                 {errors.email && (
-                  <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
-                    <AlertCircle className="w-4 h-4" />
+                  <p className="text-red-400 text-xs md:text-sm mt-1 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3 md:w-4 md:h-4" />
                     {errors.email}
                   </p>
                 )}
@@ -389,16 +389,16 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess }
 
               {/* Password Field */}
               <div>
-                <label className="block text-sm font-bold text-gray-300 mb-2">
+                <label className="block text-xs md:text-sm font-bold text-gray-300 mb-1 md:mb-2">
                   كلمة المرور
                 </label>
                 <div className="relative">
-                  <Lock className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#18b5d8] w-5 h-5" />
+                  <Lock className="absolute right-2 md:right-3 top-1/2 transform -translate-y-1/2 text-[#18b5d8] w-4 h-4 md:w-5 md:h-5" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={userData.password}
                     onChange={(e) => setUserData({ ...userData, password: e.target.value })}
-                    className={`w-full pr-12 pl-12 py-3 bg-white/5 backdrop-blur-md border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#18b5d8] transition-all text-white placeholder-gray-400 ${
+                    className={`w-full pr-8 md:pr-12 pl-8 md:pl-12 py-2 md:py-3 bg-white/5 backdrop-blur-md border rounded-lg md:rounded-xl focus:outline-none focus:ring-2 focus:ring-[#18b5d8] transition-all text-white placeholder-gray-400 text-sm md:text-base ${
                       errors.password ? 'border-red-500' : 'border-[#18b5d8]/30'
                     }`}
                     placeholder="كلمة المرور (6 أحرف على الأقل)"
@@ -406,64 +406,64 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess }
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#18b5d8] hover:text-[#16a2c7]"
+                    className="absolute left-2 md:left-3 top-1/2 transform -translate-y-1/2 text-[#18b5d8] hover:text-[#16a2c7]"
                   >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    {showPassword ? <EyeOff className="w-4 h-4 md:w-5 md:h-5" /> : <Eye className="w-4 h-4 md:w-5 md:h-5" />}
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
-                    <AlertCircle className="w-4 h-4" />
+                  <p className="text-red-400 text-xs md:text-sm mt-1 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3 md:w-4 md:h-4" />
                     {errors.password}
                   </p>
                 )}
               </div>
 
               {/* Name Fields */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                 <div>
-                  <label className="block text-sm font-bold text-gray-300 mb-2">
+                  <label className="block text-xs md:text-sm font-bold text-gray-300 mb-1 md:mb-2">
                     الاسم الأول
                   </label>
                   <div className="relative">
-                    <User className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#18b5d8] w-5 h-5" />
+                    <User className="absolute right-2 md:right-3 top-1/2 transform -translate-y-1/2 text-[#18b5d8] w-4 h-4 md:w-5 md:h-5" />
                     <input
                       type="text"
                       value={userData.firstName}
                       onChange={(e) => setUserData({ ...userData, firstName: e.target.value })}
-                      className={`w-full pr-12 pl-4 py-3 bg-white/5 backdrop-blur-md border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#18b5d8] transition-all text-white placeholder-gray-400 ${
+                      className={`w-full pr-8 md:pr-12 pl-3 md:pl-4 py-2 md:py-3 bg-white/5 backdrop-blur-md border rounded-lg md:rounded-xl focus:outline-none focus:ring-2 focus:ring-[#18b5d8] transition-all text-white placeholder-gray-400 text-sm md:text-base ${
                         errors.firstName ? 'border-red-500' : 'border-[#18b5d8]/30'
                       }`}
                       placeholder="الاسم الأول"
                     />
                   </div>
                   {errors.firstName && (
-                    <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
-                      <AlertCircle className="w-4 h-4" />
+                    <p className="text-red-400 text-xs md:text-sm mt-1 flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3 md:w-4 md:h-4" />
                       {errors.firstName}
                     </p>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-bold text-gray-300 mb-2">
+                  <label className="block text-xs md:text-sm font-bold text-gray-300 mb-1 md:mb-2">
                     الاسم الأخير
                   </label>
                   <div className="relative">
-                    <User className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#18b5d8] w-5 h-5" />
+                    <User className="absolute right-2 md:right-3 top-1/2 transform -translate-y-1/2 text-[#18b5d8] w-4 h-4 md:w-5 md:h-5" />
                     <input
                       type="text"
                       value={userData.lastName}
                       onChange={(e) => setUserData({ ...userData, lastName: e.target.value })}
-                      className={`w-full pr-12 pl-4 py-3 bg-white/5 backdrop-blur-md border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#18b5d8] transition-all text-white placeholder-gray-400 ${
+                      className={`w-full pr-8 md:pr-12 pl-3 md:pl-4 py-2 md:py-3 bg-white/5 backdrop-blur-md border rounded-lg md:rounded-xl focus:outline-none focus:ring-2 focus:ring-[#18b5d8] transition-all text-white placeholder-gray-400 text-sm md:text-base ${
                         errors.lastName ? 'border-red-500' : 'border-[#18b5d8]/30'
                       }`}
                       placeholder="الاسم الأخير"
                     />
                   </div>
                   {errors.lastName && (
-                    <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
-                      <AlertCircle className="w-4 h-4" />
+                    <p className="text-red-400 text-xs md:text-sm mt-1 flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3 md:w-4 md:h-4" />
                       {errors.lastName}
                     </p>
                   )}
@@ -472,16 +472,16 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess }
 
               {/* Phone Field */}
               <div>
-                <label className="block text-sm font-bold text-gray-300 mb-2">
+                <label className="block text-xs md:text-sm font-bold text-gray-300 mb-1 md:mb-2">
                   رقم الجوال
                 </label>
                 <div className="relative">
-                  <Phone className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#18b5d8] w-5 h-5" />
+                  <Phone className="absolute right-2 md:right-3 top-1/2 transform -translate-y-1/2 text-[#18b5d8] w-4 h-4 md:w-5 md:h-5" />
                   <input
                     type="tel"
                     value={formatSaudiPhone(userData.phone)}
                     onChange={(e) => setUserData({ ...userData, phone: e.target.value })}
-                    className={`w-full pr-12 pl-4 py-3 bg-white/5 backdrop-blur-md border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#18b5d8] transition-all text-white placeholder-gray-400 ${
+                    className={`w-full pr-8 md:pr-12 pl-3 md:pl-4 py-2 md:py-3 bg-white/5 backdrop-blur-md border rounded-lg md:rounded-xl focus:outline-none focus:ring-2 focus:ring-[#18b5d8] transition-all text-white placeholder-gray-400 text-sm md:text-base ${
                       errors.phone ? 'border-red-500' : 'border-[#18b5d8]/30'
                     }`}
                     placeholder="05xxxxxxxx"
@@ -489,8 +489,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess }
                   />
                 </div>
                 {errors.phone && (
-                  <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
-                    <AlertCircle className="w-4 h-4" />
+                  <p className="text-red-400 text-xs md:text-sm mt-1 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3 md:w-4 md:h-4" />
                     {errors.phone}
                   </p>
                 )}
@@ -498,9 +498,9 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess }
 
               {/* General Error */}
               {errors.general && (
-                <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4">
-                  <p className="text-red-400 text-sm flex items-center gap-2">
-                    <AlertCircle className="w-5 h-5" />
+                <div className="bg-red-500/10 border border-red-500/30 rounded-lg md:rounded-xl p-2 md:p-4">
+                  <p className="text-red-400 text-xs md:text-sm flex items-center gap-1 md:gap-2">
+                    <AlertCircle className="w-3 h-3 md:w-5 md:h-5" />
                     {errors.general}
                   </p>
                 </div>
@@ -511,12 +511,12 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess }
                 type="button"
                 onClick={handleRegister}
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-[#18b5d8] to-[#16a2c7] text-white py-4 rounded-2xl font-black text-lg hover:from-[#16a2c7] hover:to-[#18b5d8] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 transform flex items-center justify-center gap-2"
+                className="w-full bg-gradient-to-r from-[#18b5d8] to-[#16a2c7] text-white py-2.5 md:py-4 rounded-xl md:rounded-2xl font-black text-sm md:text-lg hover:from-[#16a2c7] hover:to-[#18b5d8] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 transform flex items-center justify-center gap-1 md:gap-2"
                 aria-label="إنشاء حساب جديد"
               >
                 {loading ? (
                   <>
-                    <Loader className="w-5 h-5 animate-spin" />
+                    <Loader className="w-4 h-4 md:w-5 md:h-5 animate-spin" />
                     <span>جاري إنشاء الحساب...</span>
                   </>
                 ) : (
@@ -527,7 +527,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess }
           )}
 
           {/* Toggle between Login/Register */}
-          <div className="mt-6 text-center">
+          <div className="mt-4 md:mt-6 text-center">
             <button
               onClick={() => {
                 setIsLogin(!isLogin);
@@ -540,7 +540,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess }
                   phone: ''
                 });
               }}
-              className="text-[#18b5d8] hover:text-[#16a2c7] font-bold transition-colors"
+              className="text-[#18b5d8] hover:text-[#16a2c7] font-bold transition-colors text-sm md:text-base"
               disabled={loading}
             >
               {isLogin ? 'ليس لديك حساب؟ سجل الآن' : 'لديك حساب بالفعل؟ سجل دخولك'}

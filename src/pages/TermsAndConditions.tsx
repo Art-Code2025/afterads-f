@@ -412,7 +412,7 @@ const TermsAndConditions: React.FC = () => {
                       <Phone className="w-4 h-4 sm:w-5 sm:h-5 text-[#7a7a7a] flex-shrink-0" />
                       <span className="text-gray-100 text-sm sm:text-base">رقم الجوال / واتساب:</span>
                     </div>
-                    <span className="font-bold text-[#7a7a7a] text-sm sm:text-base">+966551064118</span>
+                    <span className="font-bold text-[#7a7a7a] text-sm sm:text-base">01069006131</span>
                   </div>
                 </div>
               </div>

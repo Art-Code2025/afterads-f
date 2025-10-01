@@ -182,6 +182,7 @@ const LayoutWrapper: React.FC = () => {
           {/* Portfolio Routes */}
           <Route path="/portfolio" element={<Portfolio />} />
           
+         
           {/* Static Pages Route */}
           <Route path="/page/:slug" element={<StaticPageView />} />
         </Routes>

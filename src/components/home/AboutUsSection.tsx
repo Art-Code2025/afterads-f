@@ -340,8 +340,8 @@ const AboutUsSection = () => {
               </h2>
               <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-[#ffffff]/80 max-w-4xl mx-auto leading-relaxed font-light px-4">
                 وكالة سعودية رائدة في الحلول الرقمية والتسويق الإبداعي. 
-                نحن صُنّاع <span className="text-[#18b5d5] font-semibold">ثيم ملاك</span> 
-                الأشهر والأكثر نجاحًا على منصة <span className="font-bold">سلة</span>، ونفخر بكوننا الخيار الأول لأكبر العلامات التجارية في الخليج
+                نحن صُنّاع <span className="text-[#18b5d5] font-semibold"> ثيم ملاك </span> 
+                الأشهر والأكثر نجاحًا على منصة  <span className="font-bold">سلة</span>، ونفخر بكوننا الخيار الأول لأكبر العلامات التجارية في الخليج
               </p>
             </motion.div>
 

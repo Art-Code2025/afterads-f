@@ -271,7 +271,7 @@ const GlobalFooter: React.FC = () => {
                   </div>
                   <div className="flex items-center justify-center lg:justify-start gap-2 sm:gap-3 text-gray-300 hover:text-[#18b5d5] transition-all duration-300 p-2 sm:p-3 rounded-lg hover:bg-[#18b5d5]/5 group">
                     <Phone className="w-4 h-4 sm:w-5 sm:h-5 text-[#18b5d5] group-hover:scale-110 transition-transform duration-300" />
-                    <span className="text-xs sm:text-sm" dir="ltr">+966 55 106 4118</span>
+                    <span className="text-xs sm:text-sm" dir="ltr">01069006131</span>
                   </div>
                   <div className="flex items-center justify-center lg:justify-start gap-2 sm:gap-3 text-gray-300 hover:text-[#18b5d5] transition-all duration-300 p-2 sm:p-3 rounded-lg hover:bg-[#18b5d5]/5 group">
                     <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-[#18b5d5] group-hover:scale-110 transition-transform duration-300" />

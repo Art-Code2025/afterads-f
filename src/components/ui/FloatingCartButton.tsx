@@ -7,7 +7,7 @@ import { apiCall, API_ENDPOINTS } from '../../config/api';
 const FloatingCartButton: React.FC = () => {
   const [cartItemsCount, setCartItemsCount] = useState<number>(0);
   const [isCartDropdownOpen, setIsCartDropdownOpen] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -94,27 +94,33 @@ const FloatingCartButton: React.FC = () => {
     };
   }, []);
 
-  // Hide/show based on scroll (optional)
+  // Show/hide based on location and scroll (same as WhatsApp button)
   useEffect(() => {
-    let lastScrollY = window.scrollY;
-    
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      
-      // Show when scrolling up, hide when scrolling down fast
-      if (currentScrollY < lastScrollY || currentScrollY < 100) {
-        setIsVisible(true);
-      } else if (currentScrollY > lastScrollY + 10) {
-        setIsVisible(false);
-        setIsCartDropdownOpen(false); // Close dropdown when hiding
-      }
-      
-      lastScrollY = currentScrollY;
-    };
+    // إخفاء الزر في صفحات الإدارة والتسجيل فقط
+    if (location.pathname.startsWith('/admin') || location.pathname === '/login') {
+      setIsVisible(false);
+      return;
+    }
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    // إذا كانت الصفحة الرئيسية، اظهر الزر بعد السكرول
+    if (location.pathname === '/') {
+      const handleScroll = () => {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        // اظهار الزر بعد السكرول 300px (نفس الواتساب)
+        setIsVisible(scrollTop > 300);
+      };
+
+      window.addEventListener('scroll', handleScroll);
+      
+      // تحقق من الموضع الحالي عند تحميل الصفحة
+      handleScroll();
+
+      return () => window.removeEventListener('scroll', handleScroll);
+    } else {
+      // في جميع الصفحات الأخرى، اظهر الزر دائماً
+      setIsVisible(true);
+    }
+  }, [location.pathname]);
 
   // Don't render if should be hidden or no items in cart
   if (shouldHide || cartItemsCount === 0) {
@@ -125,7 +131,7 @@ const FloatingCartButton: React.FC = () => {
     <>
       {/* Floating Cart Button */}
       <div 
-        className={`fixed bottom-6 right-6 z-40 transition-all duration-300 transform ${
+        className={`fixed bottom-20 sm:bottom-24 md:bottom-28 left-4 sm:left-6 md:left-8 z-40 transition-all duration-300 transform ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-16 opacity-0'
         } lg:hidden`} // Only show on mobile/tablet
       >
@@ -154,10 +160,10 @@ const FloatingCartButton: React.FC = () => {
             <div className="absolute inset-0 rounded-full bg-white/20 scale-0 group-active:scale-100 transition-transform duration-150"></div>
           </button>
           
-          {/* Dropdown positioned above the button */}
+          {/* Dropdown positioned above the button and centered */}
           {isCartDropdownOpen && (
             <div 
-              className="absolute bottom-full right-0 mb-4"
+              className="absolute bottom-full left-1/2 transform -translate-x-1/2 translate-x-8 mb-4 z-50"
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => {
                 setIsHovered(false);

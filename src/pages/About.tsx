@@ -194,19 +194,16 @@ const About: React.FC = () => {
   const testimonials = [
     {
       name: 'عبدالله السعيد',
-      company: 'شركة النجاح التجارية',
       text: 'فريق محترف ومتميز، ساعدونا في تطوير موقعنا الإلكتروني وزيادة مبيعاتنا بشكل كبير',
       rating: 5
     },
     {
       name: 'مريم الأحمد',
-      company: 'مؤسسة الإبداع',
       text: 'خدمة عملاء ممتازة وجودة عالية في التصميم والتطوير، أنصح بالتعامل معهم',
       rating: 5
     },
     {
       name: 'خالد محمد',
-      company: 'متجر الأناقة',
       text: 'تم تطوير متجرنا الإلكتروني بطريقة احترافية وفي الوقت المحدد، شكراً لكم',
       rating: 5
     }
@@ -412,7 +409,6 @@ const About: React.FC = () => {
                 <p className="text-gray-100 mb-3 sm:mb-4 leading-relaxed text-sm sm:text-base mobile-text-sm ultra-mobile-text-xs">"{testimonial.text}"</p>
                 <div>
                   <h4 className="text-white font-bold text-sm sm:text-base mobile-text-sm ultra-mobile-text-xs">{testimonial.name}</h4>
-                  <p className="text-[#7a7a7a] text-xs sm:text-sm mobile-text-xs ultra-mobile-text-xs">{testimonial.company}</p>
                 </div>
               </div>
             ))}

@@ -105,7 +105,41 @@ const Contact: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12">
+        {/* WhatsApp Quick Contact */}
+<div className="bg-gradient-to-br from-[#292929]/95 via-[#7a7a7a]/30 to-[#292929]/90 
+    rounded-2xl backdrop-blur-xl border border-white/15 shadow-2xl 
+    p-5 sm:p-6 animate-fadeInUp mb-6 sm:mb-8 flex flex-col items-center text-center max-w-md mx-auto">
+
+  {/* Header */}
+  <div className="flex flex-col items-center gap-3 mb-3 sm:mb-4">
+    <div className="w-12 h-12 bg-gradient-to-r from-[#7a7a7a] to-[#4a4a4a] 
+        rounded-xl flex items-center justify-center shadow-md">
+      <FaWhatsapp className="w-6 h-6 text-white" />
+    </div>
+    <div>
+      <h3 className="font-bold text-white text-base sm:text-lg">للتواصل الأسرع</h3>
+      <p className="text-gray-200 text-xs sm:text-sm">واتساب - استجابة فورية</p>
+    </div>
+  </div>
+
+  {/* Button */}
+  <div className="w-full flex justify-center">
+    <a
+      href="https://wa.me/201069006131"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="w-full sm:w-3/4 inline-flex items-center justify-center gap-2 
+          bg-gradient-to-r from-[#7a7a7a] to-[#4a4a4a] text-white 
+          px-6 py-3 rounded-lg 
+          hover:from-[#8a8a8a] hover:to-[#5a5a5a] 
+          transition-all duration-300 font-medium text-sm sm:text-base shadow-lg"
+    >
+      <FaWhatsapp className="w-5 h-5" />
+      <span>ابدأ المحادثة الآن</span>
+    </a>
+  </div>
+</div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12">
           {/* Contact Information */}
           <div className="space-y-6 sm:space-y-8">
             <div className="bg-gradient-to-br from-[#292929]/95 via-[#7a7a7a]/30 to-[#292929]/90 rounded-2xl backdrop-blur-xl border border-white/15 shadow-2xl p-6 sm:p-8 animate-fadeInUp">
@@ -163,7 +197,6 @@ const Contact: React.FC = () => {
               <p className="text-gray-100 font-medium text-center text-base">
                 مدة التنفيذ تختلف من خدمة الى اخرى 
               </p>
-             
             </div>
           </div>
 
@@ -234,30 +267,6 @@ const Contact: React.FC = () => {
                 إرسال الرسالة
               </button>
             </div>
-          </div>
-        </div>
-
-        {/* WhatsApp Quick Contact */}
-        <div className="bg-gradient-to-br from-[#292929]/95 via-[#7a7a7a]/30 to-[#292929]/90 rounded-2xl backdrop-blur-xl border border-white/15 shadow-2xl p-4 sm:p-6 animate-fadeInUp mt-6 sm:mt-8">
-          <div className="flex items-center justify-center lg:justify-start gap-3 sm:gap-4 mb-4">
-            <div className="w-12 h-12 bg-gradient-to-r from-[#7a7a7a] to-[#4a4a4a] rounded-lg flex items-center justify-center flex-shrink-0">
-              <FaWhatsapp className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h3 className="font-bold text-white text-base">للتواصل الأسرع</h3>
-              <p className="text-gray-100 text-sm">واتساب - استجابة فورية</p>
-            </div>
-          </div>
-          <div className="text-center lg:text-right">
-            <a
-              href="https://wa.me/201069006131"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#7a7a7a] to-[#4a4a4a] text-white px-4 py-2 rounded-lg hover:from-[#8a8a8a] hover:to-[#5a5a5a] transition-all duration-300 font-medium text-sm shadow-lg"
-            >
-              <FaWhatsapp className="w-4 h-4" />
-              <span>ابدأ المحادثة الآن</span>
-            </a>
           </div>
         </div>
 

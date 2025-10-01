@@ -252,15 +252,8 @@ const CartDropdown: React.FC<CartDropdownProps> = ({ isOpen, onClose, onHoverCha
 
   return (
     <>
-      {/* Backdrop with blur effect */}
       <div 
-        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
-        onClick={onClose}
-      />
-      
-      {/* Dropdown */}
-      <div 
-        className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-64 xs:w-72 sm:w-96 md:w-80 lg:w-96 backdrop-blur-lg border border-white/20 rounded-xl shadow-xl z-50 max-h-[60vh] xs:max-h-[65vh] sm:max-h-[80vh] overflow-hidden"
+        className="relative w-64 xs:w-72 sm:w-96 md:w-80 lg:w-96 backdrop-blur-lg border border-white/20 rounded-xl shadow-xl z-50 max-h-[60vh] xs:max-h-[65vh] sm:max-h-[80vh] overflow-hidden"
         style={{
           background: 'rgba(41, 41, 41, 0.85)',
           backdropFilter: 'blur(16px) saturate(150%)',

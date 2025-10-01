@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { smartToast } from '../../utils/toastConfig';
-import { Menu, X, ShoppingCart, Heart, User, LogOut, Search, Package, Settings, Phone, Mail, MapPin, Clock, ChevronDown, Home, Grid3X3, Star, Award, Truck, Shield, Sparkles, Bell, ChevronLeft, BookOpen } from 'lucide-react';
+import { Menu, X, ShoppingCart, Heart, User, LogOut, Search, Package, Settings, Phone, Mail, MapPin, Clock, ChevronDown, Home, Grid3X3, Star, Award, Truck, Shield, Sparkles, Bell, ChevronLeft, BookOpen, Crown } from 'lucide-react';
 import logo from '../../assets/logo.webp';
 import AuthModal from '../modals/AuthModal';
 import CartDropdown from '../ui/CartDropdown';
@@ -46,6 +46,17 @@ function Navbar() {
   const cartDropdownRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Function to get first letter of each name for mobile display
+  const getInitials = (name: string): string => {
+    if (!name) return '';
+    return name
+      .split(' ')
+      .filter(word => word.length > 0)
+      .map(word => word.charAt(0))
+      .join('')
+      .toUpperCase();
+  };
 
   // Control navbar visibility based on scroll
   useEffect(() => {
@@ -603,10 +614,10 @@ function Navbar() {
 
   return (
     <>
-      {/* Floating Logo - Appears when scrolled and navbar is hidden */}
+      {/* Floating Logo - Appears when scrolled and navbar is hidden - Hidden on Mobile */}
       {scrolled && !showNavbar && (
         <div 
-          className="fixed top-6 right-6 z-[60] transition-all duration-300 ease-out opacity-100 translate-y-0 scale-100 pointer-events-auto"
+          className="fixed top-6 right-6 z-[60] transition-all duration-300 ease-out opacity-100 translate-y-0 scale-100 pointer-events-auto hidden md:block"
           onMouseEnter={() => {
             console.log('Logo hovered - setting isLogoHovered to true', { scrolled, showNavbar, isLogoHovered });
             setIsLogoHovered(true);
@@ -627,7 +638,7 @@ function Navbar() {
       {/* Main Navbar */}
       <nav 
         className={`fixed top-0 w-full z-50 transition-all duration-500 ease-out ${
-          showNavbar && !isMenuOpen ? 'translate-y-0' : '-translate-y-full'
+          (showNavbar && !isMenuOpen) || window.innerWidth < 1024 ? 'translate-y-0' : '-translate-y-full'
         }`}
         dir="rtl"
         onMouseEnter={() => {
@@ -650,17 +661,47 @@ function Navbar() {
           >
             <div className="flex items-center justify-between h-14 sm:h-16 px-4 sm:px-6">
               
-              {/* Mobile Menu Button */}
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="lg:hidden text-white p-2 sm:p-2.5 rounded-xl hover:bg-white/10 transition-all duration-300 backdrop-blur-sm touch-manipulation relative overflow-hidden group"
-                aria-label={isMenuOpen ? 'إغلاق القائمة' : 'فتح القائمة'}
-              >
-                <div className="relative z-10">
-                  {isMenuOpen ? <X size={22} className="sm:w-[24px] sm:h-[24px]" /> : <Menu size={22} className="sm:w-[24px] sm:h-[24px]" />}
+              {/* Mobile Menu Button & Cart */}
+              <div className="lg:hidden flex items-center space-x-2">
+                <button
+                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+                  className="text-white p-2 sm:p-2.5 rounded-xl hover:bg-white/10 transition-all duration-300 backdrop-blur-sm touch-manipulation relative overflow-hidden group"
+                  aria-label={isMenuOpen ? 'إغلاق القائمة' : 'فتح القائمة'}
+                >
+                  <div className="relative z-10">
+                    {isMenuOpen ? <X size={22} className="sm:w-[24px] sm:h-[24px]" /> : <Menu size={22} className="sm:w-[24px] sm:h-[24px]" />}
+                  </div>
+                  <div className="absolute inset-0 bg-white/5 scale-0 group-active:scale-100 transition-transform duration-150 rounded-xl"></div>
+                </button>
+
+                {/* Mobile Cart Button */}
+                <div className="relative">
+                  <button
+                    onClick={() => setIsCartDropdownOpen(!isCartDropdownOpen)}
+                    className="relative text-white p-2 sm:p-2.5 rounded-xl hover:bg-white/10 transition-all duration-300 backdrop-blur-sm touch-manipulation group"
+                    aria-label="سلة التسوق"
+                  >
+                    <ShoppingCart size={22} className="sm:w-[24px] sm:h-[24px]" />
+                    {cartItemsCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-[#18b5d5] text-white rounded-full min-w-[18px] h-[18px] flex items-center justify-center text-xs font-medium shadow-[0_0_8px_rgba(255,255,255,0.3)] animate-pulse">
+                        {cartItemsCount}
+                      </span>
+                    )}
+                    <div className="absolute inset-0 bg-white/5 scale-0 group-active:scale-100 transition-transform duration-150 rounded-xl"></div>
+                  </button>
+                  
+                  {/* Mobile Cart Dropdown */}
+                  {isCartDropdownOpen && (
+                    <div className="absolute top-full right-0 mt-2 z-50">
+                      <CartDropdown
+                        isOpen={isCartDropdownOpen}
+                        onClose={() => setIsCartDropdownOpen(false)}
+                        onHoverChange={(isHovered) => setIsCartHovered(isHovered)}
+                      />
+                    </div>
+                  )}
                 </div>
-                <div className="absolute inset-0 bg-white/5 scale-0 group-active:scale-100 transition-transform duration-150 rounded-xl"></div>
-              </button>
+              </div>
 
               {/* Logo */}
               <div className="flex items-center">
@@ -674,6 +715,7 @@ function Navbar() {
                 {[
                   { name: 'الرئيسية', href: '/' },
                   { name: 'الخدمات', href: '/products' },
+                  { name: 'ثيم ملاك', href: '/theme/55' },
                   { name: 'أعمالنا', href: '/portfolio' },
                   { name: 'المدونة', href: '/blog' },
                   { name: 'الفئات', href: '/categories' },
@@ -694,7 +736,7 @@ function Navbar() {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center space-x-3">
+              <div className="hidden lg:flex items-center space-x-3">
                 
                 
 
@@ -719,11 +761,13 @@ function Navbar() {
           <div className="absolute inset-0 rounded-xl bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         </button>
         
-        <CartDropdown 
-          isOpen={isCartDropdownOpen} 
-          onClose={() => setIsCartDropdownOpen(false)}
-          onHoverChange={setIsCartHovered}
-        />
+        <div className="absolute top-full left-0 mt-2 z-50 translate-x-4">
+          <CartDropdown 
+            isOpen={isCartDropdownOpen} 
+            onClose={() => setIsCartDropdownOpen(false)}
+            onHoverChange={setIsCartHovered}
+          />
+        </div>
       </div>
 
       {/* Wishlist Button */}
@@ -748,34 +792,35 @@ function Navbar() {
   <div className="relative" ref={userMenuRef}>
     <button 
       onClick={() => setIsUserMenuOpen(!isUserMenuOpen)} 
-      className="flex items-center text-white/90 hover:text-white px-3 py-2 rounded-xl hover:bg-white/10 transition-all duration-300 gap-3 group"
+      className="flex items-center text-white/90 hover:text-white px-2 md:px-3 py-1.5 md:py-2 rounded-lg md:rounded-xl hover:bg-white/10 transition-all duration-300 gap-2 md:gap-3 group"
     >
-      <div className="w-8 h-8 bg-gradient-to-br from-[#18b5d8] to-[#0891b2] rounded-lg flex items-center justify-center">
-        <User size={16} />
+      <div className="w-7 h-7 md:w-8 md:h-8 bg-gradient-to-br from-[#18b5d8] to-[#0891b2] rounded-md md:rounded-lg flex items-center justify-center">
+        <User size={14} className="md:w-4 md:h-4" />
       </div>
-      <span className="text-sm font-medium">{user.name?.split('   ')[0] || user.firstName || 'عميل'}</span>
-      <ChevronDown size={16} className={`transition-transform duration-300 ${isUserMenuOpen ? 'rotate-180' : ''}`} />
+      <span className="text-xs md:text-sm font-medium hidden md:inline">{user.name?.split('   ')[0] || user.firstName || 'عميل'}</span>
+      <span className="text-xs md:text-sm font-medium md:hidden">{getInitials(user.name || user.firstName || 'عميل')}</span>
+      <ChevronDown size={14} className={`md:w-4 md:h-4 transition-transform duration-300 ${isUserMenuOpen ? 'rotate-180' : ''}`} />
     </button>
     
     {isUserMenuOpen && (
-      <div className="absolute right-0 mt-2 w-56 bg-white/10 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/20 overflow-hidden animate-in slide-in-from-top-2 duration-300">
-        <div className="p-2 space-y-2">
+      <div className="absolute left-0 md:right-0 mt-2 w-36 md:w-56 max-w-[calc(100vw-0.5rem)] bg-white/10 backdrop-blur-2xl rounded-lg md:rounded-2xl shadow-2xl border border-white/20 overflow-hidden animate-in slide-in-from-top-2 duration-300 z-[70]">
+        <div className="p-1 md:p-2 space-y-0.5 md:space-y-2">
           <Link
             to="/profile"
             onClick={() => setIsUserMenuOpen(false)}
-            className="flex items-center px-4 py-3 text-white/90 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-200 gap-3"
+            className="flex items-center px-2 md:px-4 py-1.5 md:py-3 text-white/90 hover:text-white hover:bg-white/10 rounded-md md:rounded-xl transition-all duration-200 gap-1.5 md:gap-3"
           >
-            <User size={18} />
-            <span>الملف الشخصي</span>
+            <User size={14} className="md:w-[18px] md:h-[18px] flex-shrink-0" />
+            <span className="text-xs md:text-base truncate">الملف الشخصي</span>
           </Link>
           
-          <div className="border-t border-white/10 my-2"></div>
+          <div className="border-t border-white/10 my-0.5 md:my-2"></div>
           <button 
             onClick={handleLogout} 
-            className="flex items-center w-full px-4 py-3 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl transition-all duration-200 gap-3"
+            className="flex items-center w-full px-2 md:px-4 py-1.5 md:py-3 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-md md:rounded-xl transition-all duration-200 gap-1.5 md:gap-3"
           >
-            <LogOut size={18} />
-            <span>تسجيل الخروج</span>
+            <LogOut size={14} className="md:w-[18px] md:h-[18px] flex-shrink-0" />
+            <span className="text-xs md:text-base truncate">تسجيل الخروج</span>
           </button>
         </div>
       </div>
@@ -807,97 +852,398 @@ function Navbar() {
           }
         }}
       >
-        {/* Mobile Menu Panel */}
+        {/* Mobile Menu Panel - Professional Glassmorphism */}
         <div 
-          className={`fixed right-0 top-0 h-full w-full max-w-sm bg-white/10 backdrop-blur-2xl border-l border-white/20 p-4 sm:p-6 transform transition-transform duration-500 ease-out ${
+          className={`fixed right-0 top-0 h-full w-full max-w-sm transform transition-all duration-700 ease-out flex flex-col ${
             isMenuOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
           onClick={(e) => e.stopPropagation()}
+          style={{
+            background: 'linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 100%)',
+            backdropFilter: 'blur(40px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(40px) saturate(180%)',
+            borderLeft: '1px solid rgba(255,255,255,0.15)',
+            boxShadow: `
+              -20px 0 60px rgba(0,0,0,0.3),
+              inset 1px 0 1px rgba(255,255,255,0.1),
+              inset 0 1px 1px rgba(255,255,255,0.05)
+            `,
+            maxHeight: '100vh',
+            overflowY: 'hidden'
+          }}
         >
-          
-          {/* Close Button */}
-          <div className="flex justify-between items-center mb-8">
-            <Link to="/" onClick={() => setIsMenuOpen(false)} className="transition-transform duration-200 hover:scale-105">
-              <img src={logo} alt="Logo" className="h-10 w-auto" />
+          {/* Animated Background Orbs */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div 
+              className="absolute -top-20 -right-20 w-40 h-40 rounded-full opacity-20 animate-pulse"
+              style={{
+                background: 'radial-gradient(circle, rgba(24,181,216,0.3) 0%, transparent 70%)',
+                animationDuration: '4s'
+              }}
+            ></div>
+            <div 
+              className="absolute top-1/3 -right-10 w-24 h-24 rounded-full opacity-15 animate-pulse"
+              style={{
+                background: 'radial-gradient(circle, rgba(8,145,178,0.4) 0%, transparent 70%)',
+                animationDuration: '6s',
+                animationDelay: '2s'
+              }}
+            ></div>
+            <div 
+              className="absolute bottom-1/4 -right-16 w-32 h-32 rounded-full opacity-10 animate-pulse"
+              style={{
+                background: 'radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%)',
+                animationDuration: '8s',
+                animationDelay: '1s'
+              }}
+            ></div>
+          </div>
+
+          {/* Header Section - Enhanced Glassmorphism */}
+          <div 
+            className="relative flex justify-between items-center p-6 border-b border-white/15"
+            style={{
+              background: 'linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)'
+            }}
+          >
+            <Link to="/" onClick={() => setIsMenuOpen(false)} className="transition-all duration-300 hover:scale-105 hover:drop-shadow-lg">
+              <img src={logo} alt="Logo" className="h-12 w-auto filter drop-shadow-sm" />
             </Link>
             <button 
               onClick={() => setIsMenuOpen(false)} 
-              className="text-white p-2.5 rounded-xl hover:bg-white/10 transition-all duration-300 relative overflow-hidden group"
+              className="relative text-white p-3 rounded-2xl transition-all duration-300 group overflow-hidden"
               aria-label="إغلاق القائمة"
+              style={{
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255,255,255,0.1)'
+              }}
             >
-              <div className="relative z-10">
+              <div className="relative z-10 transition-transform duration-300 group-hover:rotate-90">
                 <X size={24} />
               </div>
-              <div className="absolute inset-0 bg-red-500/10 scale-0 group-active:scale-100 transition-transform duration-150 rounded-xl"></div>
+              <div 
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-2xl"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(239,68,68,0.2) 0%, rgba(220,38,38,0.1) 100%)'
+                }}
+              ></div>
             </button>
           </div>
 
-          {/* Mobile Navigation Links */}
-          <div className="space-y-1 mb-8">
-            {[
-              { name: 'الرئيسية', href: '/', icon: Home },
-              { name: 'المنتجات', href: '/products', icon: Grid3X3 },
-              { name: 'أعمالنا', href: '/portfolio', icon: Star },
-              { name: 'المدونة', href: '/blog', icon: BookOpen },
-              { name: 'الفئات', href: '/categories', icon: Package },
-              { name: 'تواصل معنا', href: '/contact', icon: Phone }
-            ].map((link, index) => (
-              <Link
-                key={link.name}
-                to={link.href}
-                onClick={() => setIsMenuOpen(false)}
-                className={`flex items-center px-4 py-4 text-white/90 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-300 space-x-3 group touch-manipulation relative overflow-hidden ${
-                  isActive(link.href) ? 'bg-white/5 text-[#18b5d8]' : ''
-                }`}
+          {/* Content Container */}
+          <div className="flex flex-col flex-1 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 120px)' }}>
+            {/* User Section - Enhanced Glassmorphism */}
+            {user ? (
+              <div 
+                className="relative p-6 border-b border-white/15"
                 style={{
-                  animationDelay: `${index * 50}ms`,
-                  animation: isMenuOpen ? 'slideInRight 0.3s ease-out forwards' : 'none'
+                  background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)',
+                  backdropFilter: 'blur(20px)',
+                  WebkitBackdropFilter: 'blur(20px)'
                 }}
               >
-                <link.icon size={20} className="flex-shrink-0" />
-                <span className="font-medium text-base">{link.name}</span>
-                <ChevronLeft size={16} className="mr-auto opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1" />
-                {isActive(link.href) && (
-                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#18b5d8] to-[#0891b2] rounded-r-full"></div>
-                )}
-              </Link>
-            ))}
-          </div>
-
-          {/* Mobile Action Buttons */}
-          <div className="space-y-2 pt-4 border-t border-white/10">
-            <Link to="/cart" onClick={() => setIsMenuOpen(false)} className="flex items-center w-full px-4 py-3.5 text-white/90 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-300 space-x-3 touch-manipulation group relative overflow-hidden">
-              <ShoppingCart size={20} className="flex-shrink-0" />
-              <span className="text-base font-medium">سلة التسوق</span>
-              {cartItemsCount > 0 && (
-                <span className="mr-auto bg-[#18b5d8] text-white rounded-full min-w-[22px] h-[22px] flex items-center justify-center text-xs font-bold shadow-lg">
-                  {cartItemsCount}
-                </span>
-              )}
-              <div className="absolute inset-0 bg-gradient-to-r from-[#18b5d8]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            </Link>
-            
-            <Link to="/wishlist" onClick={() => setIsMenuOpen(false)} className="flex items-center w-full px-4 py-3.5 text-white/90 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-300 space-x-3 touch-manipulation group relative overflow-hidden">
-              <Heart size={20} className="flex-shrink-0" />
-              <span className="text-base font-medium">المفضلة</span>
-              {wishlistItemsCount > 0 && (
-                <span className="mr-auto bg-pink-500 text-white rounded-full min-w-[22px] h-[22px] flex items-center justify-center text-xs font-bold shadow-lg">
-                  {wishlistItemsCount}
-                </span>
-              )}
-              <div className="absolute inset-0 bg-gradient-to-r from-pink-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            </Link>
-            
-            {!user && (
-              <button 
-                onClick={openAuthModal}
-                className="flex items-center w-full px-4 py-3.5 text-white bg-gradient-to-r from-[#18b5d8] to-[#0891b2] rounded-xl hover:from-[#0891b2] hover:to-[#18b5d8] transition-all duration-300 space-x-3 shadow-lg mt-4 touch-manipulation relative overflow-hidden group"
+                {/* User Info Card */}
+                <div 
+                  className="relative flex items-center p-5 text-white rounded-2xl mb-6 overflow-hidden group"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.08) 100%)',
+                    backdropFilter: 'blur(25px)',
+                    WebkitBackdropFilter: 'blur(25px)',
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.1), 0 8px 32px rgba(0,0,0,0.1)'
+                  }}
+                >
+                  {/* Animated Background */}
+                  <div 
+                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(24,181,216,0.1) 0%, rgba(8,145,178,0.05) 100%)'
+                    }}
+                  ></div>
+                  
+                  {/* Avatar */}
+                  <div 
+                    className="relative w-14 h-14 rounded-2xl flex items-center justify-center mr-4 overflow-hidden"
+                    style={{
+                      background: 'linear-gradient(135deg, #18b5d8 0%, #0891b2 100%)',
+                      boxShadow: '0 8px 32px rgba(24,181,216,0.3), inset 0 1px 1px rgba(255,255,255,0.2)'
+                    }}
+                  >
+                    <span className="text-white font-bold text-xl relative z-10">
+                      {getInitials(user.name || user.firstName || 'عميل')}
+                    </span>
+                    <div 
+                      className="absolute inset-0 opacity-50"
+                      style={{
+                        background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3), transparent 70%)'
+                      }}
+                    ></div>
+                  </div>
+                  
+                  {/* User Details */}
+                  <div className="flex-1 relative z-10">
+                    <div className="text-lg font-bold text-white mb-1">
+                      {user.name?.split(' ')[0] || user.firstName || 'عميل'}
+                    </div>
+                    <div className="text-sm text-white/80 font-medium">
+                      {user.email}
+                    </div>
+                  </div>
+                  
+                  {/* Status Indicator */}
+                  <div className="flex items-center space-x-2">
+                    <div 
+                      className="w-3 h-3 rounded-full animate-pulse"
+                      style={{
+                        background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                        boxShadow: '0 0 10px rgba(16,185,129,0.5)'
+                      }}
+                    ></div>
+                    <span className="text-xs text-white/70 font-medium">متصل</span>
+                  </div>
+                </div>
+                
+                {/* Action Buttons */}
+                <div className="space-y-3">
+                  <Link
+                    to="/profile"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="relative flex items-center w-full px-5 py-4 text-white/90 hover:text-white rounded-2xl transition-all duration-300 space-x-3 touch-manipulation group overflow-hidden"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)',
+                      backdropFilter: 'blur(15px)',
+                      WebkitBackdropFilter: 'blur(15px)',
+                      border: '1px solid rgba(255,255,255,0.1)'
+                    }}
+                  >
+                    <div 
+                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-2xl"
+                      style={{
+                        background: 'linear-gradient(135deg, rgba(24,181,216,0.15) 0%, rgba(8,145,178,0.08) 100%)'
+                      }}
+                    ></div>
+                    <User size={22} className="flex-shrink-0 relative z-10" />
+                    <span className="text-base font-semibold relative z-10">الملف الشخصي</span>
+                    <ChevronLeft size={18} className="mr-auto opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1 relative z-10" />
+                  </Link>
+                  
+                  <button 
+                    onClick={handleLogout}
+                    className="relative flex items-center w-full px-5 py-4 text-red-400 hover:text-red-300 rounded-2xl transition-all duration-300 space-x-3 touch-manipulation group overflow-hidden"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)',
+                      backdropFilter: 'blur(15px)',
+                      WebkitBackdropFilter: 'blur(15px)',
+                      border: '1px solid rgba(255,255,255,0.1)'
+                    }}
+                  >
+                    <div 
+                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-2xl"
+                      style={{
+                        background: 'linear-gradient(135deg, rgba(239,68,68,0.15) 0%, rgba(220,38,38,0.08) 100%)'
+                      }}
+                    ></div>
+                    <LogOut size={22} className="flex-shrink-0 relative z-10" />
+                    <span className="text-base font-semibold relative z-10">تسجيل الخروج</span>
+                    <ChevronLeft size={18} className="mr-auto opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1 relative z-10" />
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div 
+                className="relative p-6 border-b border-white/15"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)',
+                  backdropFilter: 'blur(20px)',
+                  WebkitBackdropFilter: 'blur(20px)'
+                }}
               >
-                <User size={20} className="flex-shrink-0" />
-                <span className="font-bold text-base">تسجيل دخول</span>
-                <div className="absolute inset-0 bg-white/10 opacity-0 group-active:opacity-100 transition-opacity duration-150"></div>
-              </button>
+                <button 
+                  onClick={openAuthModal}
+                  className="relative flex items-center justify-center w-full px-6 py-5 text-white rounded-2xl transition-all duration-300 touch-manipulation group overflow-hidden"
+                  style={{
+                    background: 'linear-gradient(135deg, #18b5d8 0%, #0891b2 100%)',
+                    boxShadow: '0 8px 32px rgba(24,181,216,0.3), inset 0 1px 1px rgba(255,255,255,0.2)'
+                  }}
+                >
+                  {/* Animated Background */}
+                  <div 
+                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-2xl"
+                    style={{
+                      background: 'linear-gradient(135deg, #0891b2 0%, #18b5d8 100%)'
+                    }}
+                  ></div>
+                  
+                  {/* Shimmer Effect */}
+                  <div 
+                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-500"
+                    style={{
+                      background: 'linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.2) 50%, transparent 70%)',
+                      transform: 'translateX(-100%)',
+                      animation: 'shimmer 1.5s ease-in-out infinite'
+                    }}
+                  ></div>
+                  
+                  <User size={24} className="flex-shrink-0 ml-3 relative z-10" />
+                  <span className="font-bold text-lg relative z-10">تسجيل دخول</span>
+                </button>
+              </div>
             )}
+
+            {/* Navigation Links Section - Enhanced Glassmorphism */}
+            <div 
+              className="relative p-6 flex-1"
+              style={{
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)',
+                backdropFilter: 'blur(15px)',
+                WebkitBackdropFilter: 'blur(15px)'
+              }}
+            >
+              {/* Section Header */}
+              <div className="flex items-center mb-6">
+                <div 
+                  className="w-1 h-6 rounded-full mr-3"
+                  style={{
+                    background: 'linear-gradient(135deg, #18b5d8 0%, #0891b2 100%)',
+                    boxShadow: '0 0 10px rgba(24,181,216,0.5)'
+                  }}
+                ></div>
+                <h3 className="text-white/80 text-sm font-bold uppercase tracking-wider">الصفحات</h3>
+              </div>
+              
+              {/* Navigation Links */}
+              <div className="space-y-3">
+                {[
+                  { name: 'الرئيسية', href: '/', icon: Home, color: '#18b5d8' },
+                  { name: 'الخدمات', href: '/products', icon: Grid3X3, color: '#0891b2' },
+                  { name: 'ثيم ملاك', href: '/theme/55', icon: Crown, color: '#f59e0b' },
+                  { name: 'أعمالنا', href: '/portfolio', icon: Star, color: '#8b5cf6' },
+                  { name: 'المدونة', href: '/blog', icon: BookOpen, color: '#10b981' },
+                  { name: 'الفئات', href: '/categories', icon: Package, color: '#f97316' },
+                  { name: 'تواصل معنا', href: '/contact', icon: Phone, color: '#ef4444' }
+                ].map((link, index) => (
+                  <Link
+                    key={link.name}
+                    to={link.href}
+                    onClick={() => setIsMenuOpen(false)}
+                    className={`relative flex items-center px-5 py-4 text-white/90 hover:text-white rounded-2xl transition-all duration-300 space-x-3 group touch-manipulation overflow-hidden ${
+                      isActive(link.href) ? 'text-white' : ''
+                    }`}
+                    style={{
+                      background: isActive(link.href) 
+                        ? `linear-gradient(135deg, ${link.color}20 0%, ${link.color}10 100%)`
+                        : 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)',
+                      backdropFilter: 'blur(15px)',
+                      WebkitBackdropFilter: 'blur(15px)',
+                      border: isActive(link.href) 
+                        ? `1px solid ${link.color}40`
+                        : '1px solid rgba(255,255,255,0.1)',
+                      animationDelay: `${index * 100}ms`,
+                      animation: isMenuOpen ? 'slideInRight 0.5s ease-out forwards' : 'none'
+                    }}
+                  >
+                    {/* Hover Background */}
+                    <div 
+                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-2xl"
+                      style={{
+                        background: `linear-gradient(135deg, ${link.color}15 0%, ${link.color}08 100%)`
+                      }}
+                    ></div>
+                    
+                    {/* Icon Container */}
+                    <div 
+                      className="relative w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:scale-110"
+                      style={{
+                        background: isActive(link.href) 
+                          ? `linear-gradient(135deg, ${link.color} 0%, ${link.color}cc 100%)`
+                          : 'linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.08) 100%)',
+                        boxShadow: isActive(link.href) 
+                          ? `0 4px 20px ${link.color}40`
+                          : '0 2px 10px rgba(0,0,0,0.1)'
+                      }}
+                    >
+                      <link.icon 
+                        size={20} 
+                        className="relative z-10"
+                        style={{ 
+                          color: isActive(link.href) ? '#ffffff' : link.color 
+                        }}
+                      />
+                      {isActive(link.href) && (
+                        <div 
+                          className="absolute inset-0 rounded-xl opacity-50"
+                          style={{
+                            background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3), transparent 70%)'
+                          }}
+                        ></div>
+                      )}
+                    </div>
+                    
+                    {/* Text */}
+                    <span className="font-semibold text-base relative z-10 flex-1">{link.name}</span>
+                    
+                    {/* Arrow */}
+                    <ChevronLeft 
+                      size={18} 
+                      className="opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1 relative z-10"
+                      style={{ color: link.color }}
+                    />
+                    
+                    {/* Active Indicator */}
+                    {isActive(link.href) && (
+                      <div 
+                        className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 rounded-r-full"
+                        style={{
+                          background: `linear-gradient(135deg, ${link.color} 0%, ${link.color}cc 100%)`,
+                          boxShadow: `0 0 15px ${link.color}60`
+                        }}
+                      ></div>
+                    )}
+                    
+                    {/* Shimmer Effect on Hover */}
+                    <div 
+                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-700 rounded-2xl"
+                      style={{
+                        background: 'linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%)',
+                        transform: 'translateX(-100%)',
+                        animation: 'shimmer 2s ease-in-out infinite'
+                      }}
+                    ></div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Action Buttons Section */}
+            {/* Wishlist Section - Simple Design */}
+            <div className="relative p-6 border-t border-white/10">
+              <Link
+                to="/wishlist"
+                onClick={() => setIsMenuOpen(false)}
+                className="flex items-center px-5 py-4 text-white/90 hover:text-white rounded-2xl transition-all duration-300 space-x-3 group touch-manipulation"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)',
+                  backdropFilter: 'blur(15px)',
+                  WebkitBackdropFilter: 'blur(15px)',
+                  border: '1px solid rgba(255,255,255,0.1)'
+                }}
+              >
+                <div className="relative">
+                  <Heart size={22} className="flex-shrink-0" />
+                  {wishlistItemsCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-pink-500 text-white rounded-full min-w-[18px] h-[18px] flex items-center justify-center text-xs font-bold">
+                      {wishlistItemsCount}
+                    </span>
+                  )}
+                </div>
+                <span className="text-base font-semibold">المفضلة</span>
+                <ChevronLeft size={18} className="mr-auto opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1" />
+              </Link>
+            </div>
           </div>
         </div>
       </div>
