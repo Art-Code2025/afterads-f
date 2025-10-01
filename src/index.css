@@ -49,6 +49,58 @@
     @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl;
   }
   
+  /* Mobile-optimized image utilities */
+  .image-responsive {
+    @apply w-full h-auto object-cover;
+  }
+  
+  .image-container-mobile {
+    @apply relative overflow-hidden rounded-lg;
+    aspect-ratio: 1 / 1;
+  }
+  
+  @media (min-width: 640px) {
+    .image-container-mobile {
+      aspect-ratio: 4 / 3;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .image-container-mobile {
+      aspect-ratio: 3 / 2;
+    }
+  }
+  
+  /* Hide scrollbar for thumbnail containers */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Enhanced mobile touch interactions */
+  .micro-hover {
+    @apply transform transition-transform duration-300 ease-out;
+  }
+  
+  @media (hover: hover) {
+    .micro-hover:hover {
+      @apply scale-105;
+    }
+  }
+  
+  /* Mobile-first image loading optimization */
+  .lazy-image {
+    @apply opacity-0 transition-opacity duration-300;
+  }
+  
+  .lazy-image.loaded {
+    @apply opacity-100;
+  }
+  
   /* Glassmorphism Mobile Menu Animations */
   @keyframes shimmer {
     0% {

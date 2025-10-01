@@ -635,7 +635,7 @@ const UserProfile: React.FC = () => {
                       <div key={order.id} className="bg-white/5 backdrop-blur-2xl border border-[#18b5d8]/30 rounded-2xl p-6 hover:shadow-[0_0_15px_rgba(24,181,216,0.4)] transition-all duration-300 animate-shimmer" style={{ animationDelay: `${index * 50}ms` }}>
                         <div className="flex items-center justify-between mb-3">
                           <div>
-                            <h4 className="font-black text-white">طلب #{order.orderNumber}</h4>
+                            <h4 className="font-black text-white">طلب #{order.id}</h4>
                             <p className="text-sm text-[#18b5d8]">{new Date(order.createdAt).toLocaleDateString('ar-SA')}</p>
                           </div>
                           <span className={`px-3 py-1 rounded-full text-sm font-bold ${getStatusColor(order.status)}`}>

@@ -61,6 +61,105 @@ const ThankYou: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [celebrationActive, setCelebrationActive] = useState(false);
 
+  // فنكشن لحساب المرحلة النشطة حسب حالة الطلب
+  const getOrderStageInfo = (status: string) => {
+    // إذا كان الطلب ملغي، نعرض مراحل مختلفة
+    if (status === 'cancelled') {
+      return [
+        { 
+          key: 'received', 
+          label: 'تم استلام الطلب', 
+          description: 'طلبك وصلنا بنجاح',
+          icon: CheckCircle,
+          isCompleted: true,
+          isCurrent: false,
+          index: 0
+        },
+        { 
+          key: 'cancelled', 
+          label: 'تم إلغاء الطلب', 
+          description: 'تم إلغاء طلبك بناءً على طلبك أو لأسباب فنية',
+          icon: Clock,
+          isCompleted: true,
+          isCurrent: true,
+          index: 1
+        }
+      ];
+    }
+
+    const stages = [
+      { 
+        key: 'received', 
+        label: 'تم استلام الطلب', 
+        description: 'طلبك وصلنا بنجاح ونحن نراجعه الآن',
+        icon: CheckCircle,
+        statuses: ['pending', 'confirmed', 'preparing', 'delivered']
+      },
+      { 
+        key: 'confirmed', 
+        label: 'تأكيد الطلب', 
+        description: 'تم تأكيد طلبك وسيتم البدء في التحضير',
+        icon: CheckCircle,
+        statuses: ['confirmed', 'preparing', 'delivered']
+      },
+      { 
+        key: 'preparing', 
+        label: 'تحضير الطلب', 
+        description: 'جاري تحضير طلبك وتجهيزه للتسليم',
+        icon: Package,
+        statuses: ['preparing', 'delivered']
+      },
+      { 
+        key: 'delivered', 
+        label: 'تم التسليم', 
+        description: 'تم تسليم طلبك بنجاح',
+        icon: CheckCircle,
+        statuses: ['delivered']
+      }
+    ];
+
+    return stages.map((stage, index) => {
+      const isCompleted = stage.statuses.includes(status);
+      const isCurrent = (
+        (status === 'pending' && stage.key === 'received') ||
+        (status === 'confirmed' && stage.key === 'confirmed') ||
+        (status === 'preparing' && stage.key === 'preparing') ||
+        (status === 'delivered' && stage.key === 'delivered')
+      );
+      
+      return {
+        ...stage,
+        isCompleted,
+        isCurrent,
+        index
+      };
+    });
+  };
+
+  // فنكشن للحصول على نص الحالة باللغة العربية
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'pending': return 'قيد المراجعة';
+      case 'confirmed': return 'مؤكد';
+      case 'preparing': return 'قيد التحضير';
+      case 'delivered': return 'تم التسليم';
+      case 'cancelled': return 'ملغي';
+      default: return status;
+    }
+  };
+
+  // فنكشن للحصول على لون الحالة
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'pending': return 'bg-yellow-500/20 text-yellow-300 border-yellow-500/50';
+      case 'confirmed': return 'bg-blue-500/20 text-blue-300 border-blue-500/50';
+      case 'preparing': return 'bg-orange-500/20 text-orange-300 border-orange-500/50';
+      case 'delivered': return 'bg-green-500/20 text-green-300 border-green-500/50';
+      case 'cancelled': return 'bg-red-500/20 text-red-300 border-red-500/50';
+      default: return 'bg-gray-500/20 text-gray-300 border-gray-500/50';
+    }
+  };
+
   useEffect(() => {
     // التأكد من مسح السلة عند وصول المستخدم لصفحة Thank You
     const clearCartAfterOrder = () => {
@@ -260,11 +359,14 @@ const ThankYou: React.FC = () => {
                   <Package className="w-6 h-6 sm:w-8 sm:h-8" />
                   <div className="absolute -top-1 -right-1 w-3 h-3 sm:w-4 sm:h-4 bg-yellow-400 rounded-full animate-ping"></div>
                 </div>
-                <div>
+                <div className="text-center">
                   <p className="text-xs sm:text-sm opacity-90 font-bold">رقم الطلب</p>
                   <p className="text-lg sm:text-2xl lg:text-3xl font-black tracking-wider">#{order.id}</p>
                 </div>
-                <Award className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-300" />
+                {/* مؤشر الحالة */}
+                <div className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-full border text-xs sm:text-sm font-bold ${getStatusColor(order.status)}`}>
+                  {getStatusText(order.status)}
+                </div>
               </div>
             </div>
           </div>
@@ -432,43 +534,84 @@ const ThankYou: React.FC = () => {
                 مراحل معالجة طلبك
               </h3>
               
-              <div className="relative">
-                {/* Progress Line */}
-                <div className="absolute right-6 top-0 bottom-0 w-1 bg-white/20 rounded-full"></div>
-                <div className="absolute right-6 top-0 h-16 w-1 bg-gradient-to-b from-[#18b5d8] to-[#16a2c7] rounded-full shadow-lg"></div>
-                
-                <div className="space-y-4 sm:space-y-8">
-                  <div className="flex items-center gap-3 sm:gap-6 relative">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-[#18b5d8] to-[#16a2c7] rounded-full flex items-center justify-center shadow-xl z-10">
-                      <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                    </div>
-                    <div>
-                      <h4 className="font-black text-white text-sm sm:text-lg">تم استلام الطلب</h4>
-                      <p className="text-gray-300 text-xs sm:text-base">طلبك وصلنا بنجاح ونحن نراجعه الآن</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-6 relative opacity-60">
-                    <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center border-2 border-[#18b5d8]/50">
-                      <Clock className="w-6 h-6 text-[#18b5d8]" />
-                    </div>
-                    <div>
-                      <h4 className="font-black text-white text-lg">تأكيد الطلب</h4>
-                      <p className="text-gray-300">سيتم التواصل معك خلال 24 ساعة</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-6 relative opacity-40">
-                    <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center border border-white/20">
-                      <Package className="w-6 h-6 text-white/60" />
-                    </div>
-                    <div>
-                      <h4 className="font-black text-white/60 text-lg">تحضير الطلب</h4>
-                      <p className="text-gray-400">سيتم تحضير طلبك وتجهيزه للشحن</p>
-                    </div>
-                  </div>
+              {order && (
+                <div className="relative">
+                  {(() => {
+                    const stageInfo = getOrderStageInfo(order.status);
+                    const completedStages = stageInfo.filter(stage => stage.isCompleted).length;
+                    const progressHeight = completedStages > 0 ? `${(completedStages - 1) * 25 + 12}%` : '12%';
+                    
+                    return (
+                      <>
+                        {/* Progress Line Background */}
+                        <div className="absolute right-[18px] sm:right-[26px] top-[20px] sm:top-[24px] bottom-[20px] sm:bottom-[24px] w-0.5 sm:w-1 bg-white/20 rounded-full"></div>
+                        {/* Active Progress Line */}
+                        <div 
+                          className="absolute right-[18px] sm:right-[26px] top-[20px] sm:top-[24px] w-0.5 sm:w-1 bg-gradient-to-b from-[#18b5d8] to-[#16a2c7] rounded-full shadow-lg transition-all duration-1000 ease-out"
+                          style={{ height: progressHeight }}
+                        ></div>
+                        
+                        <div className="space-y-4 sm:space-y-8">
+                          {stageInfo.map((stage) => {
+                            const Icon = stage.icon;
+                            
+                            return (
+                              <div 
+                                key={stage.key}
+                                className={`flex items-center gap-3 sm:gap-6 relative transition-all duration-500 ${
+                                  stage.isCompleted ? 'opacity-100' : 
+                                  stage.isCurrent ? 'opacity-80' : 'opacity-40'
+                                }`}
+                              >
+                                <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shadow-xl z-10 transition-all duration-500 ${
+                                  stage.isCompleted 
+                                    ? 'bg-gradient-to-r from-[#18b5d8] to-[#16a2c7]' 
+                                    : stage.isCurrent
+                                    ? 'bg-white/20 border-2 border-[#18b5d8]'
+                                    : 'bg-white/10 border border-white/20'
+                                }`}>
+                                  <Icon className={`w-5 h-5 sm:w-6 sm:h-6 transition-colors duration-500 ${
+                                    stage.isCompleted 
+                                      ? 'text-white' 
+                                      : stage.isCurrent
+                                      ? 'text-[#18b5d8]'
+                                      : 'text-white/60'
+                                  }`} />
+                                </div>
+                                <div>
+                                  <h4 className={`font-black text-sm sm:text-lg transition-colors duration-500 ${
+                                    stage.isCompleted 
+                                      ? 'text-white' 
+                                      : stage.isCurrent
+                                      ? 'text-white'
+                                      : 'text-white/60'
+                                  }`}>
+                                    {stage.label}
+                                    {stage.isCurrent && (
+                                      <span className="mr-2 text-[#18b5d8] text-xs sm:text-sm font-normal">
+                                        (الحالة الحالية)
+                                      </span>
+                                    )}
+                                  </h4>
+                                  <p className={`text-xs sm:text-base transition-colors duration-500 ${
+                                    stage.isCompleted 
+                                      ? 'text-gray-300' 
+                                      : stage.isCurrent
+                                      ? 'text-gray-300'
+                                      : 'text-gray-400'
+                                  }`}>
+                                    {stage.description}
+                                  </p>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </>
+                    );
+                  })()}
                 </div>
-              </div>
+              )}
             </div>
           </div>
 

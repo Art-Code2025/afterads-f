@@ -662,7 +662,7 @@ function Navbar() {
             <div className="flex items-center justify-between h-14 sm:h-16 px-4 sm:px-6">
               
               {/* Mobile Menu Button & Cart */}
-              <div className="lg:hidden flex items-center space-x-2">
+              <div className="lg:hidden flex items-center space-x-3">
                 <button
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
                   className="text-white p-2 sm:p-2.5 rounded-xl hover:bg-white/10 transition-all duration-300 backdrop-blur-sm touch-manipulation relative overflow-hidden group"

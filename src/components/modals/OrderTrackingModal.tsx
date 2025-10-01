@@ -35,7 +35,7 @@ const OrderTrackingModal: React.FC<OrderTrackingModalProps> = ({ order, isOpen, 
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
             <div className="flex items-center space-x-3 sm:space-x-4">
               <div>
-                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold">الطلب #{order.orderNumber}</h2>
+                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold">الطلب #{order.id}</h2>
                 <p className="text-gray-300 text-sm sm:text-base">
                   {new Date(order.createdAt).toLocaleDateString('ar-SA', {
                     year: 'numeric',
@@ -85,11 +85,11 @@ const OrderTrackingModal: React.FC<OrderTrackingModalProps> = ({ order, isOpen, 
                       )}
                     </div>
                     <div className="mr-4">
-                      <h4 className={`font-bold ${isCurrent ? 'text-[#292929]' : isCompleted ? 'text-[#18b5d5]' : 'text-gray-500'}`}>
+                      <h4 className={`font-bold ${isCurrent ? 'text-[#18b5d5]' : isCompleted ? 'text-[#18b5d5]' : 'text-gray-500'}`}>
                         {status.label}
                       </h4>
                       <p className="text-sm text-white">
-                        {isCurrent ? 'الحالة الحالية' : isCompleted ? 'تم إنجازها' : 'في الانتظار'}
+                        {isCurrent ? `الحالة الحالية` : isCompleted ? 'تم إنجازها' : 'في الانتظار'}
                       </p>
                     </div>
                   </div>

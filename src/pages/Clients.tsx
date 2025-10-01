@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { User, Calendar, Search, Filter, Plus, Edit, Trash2, ExternalLink } from 'lucide-react';
 import { apiCall, API_ENDPOINTS, buildImageUrl } from '../config/api';
 import { smartToast } from '../utils/toastConfig';
-import logo from '../assets/logo.png';
+import logo from '../assets/logo.webp';
 
 interface Client {
   id: number;

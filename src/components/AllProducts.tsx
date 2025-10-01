@@ -289,7 +289,7 @@ const AllProducts: React.FC = () => {
               
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-white">
-              جميع المنتجات <span className="text-[#7a7a7a]">المتميزة</span>
+              جميع الخدمات <span className="text-[#7a7a7a]">المتميزة</span>
             </h1>
             <div className="relative w-12 h-12">
               <div className="absolute -inset-2 bg-gradient-to-br from-[#7a7a7a]/30 to-[#292929]/30 blur-sm transform rotate-0 transition-all duration-500"
@@ -305,7 +305,7 @@ const AllProducts: React.FC = () => {
             </div>
           </div>
           <p className="text-xl text-gray-100 max-w-3xl mx-auto px-4">
-            اكتشف مجموعتنا الكاملة من المنتجات المتميزة واختر ما يناسبك
+            اكتشف مجموعتنا الكاملة من الخدمات المتميزة واختر ما يناسبك
           </p>
         </div>
         
@@ -318,7 +318,7 @@ const AllProducts: React.FC = () => {
                 <Search className="absolute top-1/2 right-3 sm:right-4 transform -translate-y-1/2 text-[#7a7a7a] w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
                 <input
                   type="text"
-                  placeholder="ابحث عن المنتجات..."
+                  placeholder="ابحث عن الخدمات..."
                   value={searchTerm}
                   onChange={handleSearch}
                   className="w-full pr-10 sm:pr-12 pl-3 sm:pl-4 py-2.5 sm:py-3 bg-gradient-to-r from-[#7a7a7a]/30 to-[#292929]/30 backdrop-blur-sm border border-[#7a7a7a]/40 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#7a7a7a] focus:border-transparent transition-all duration-300 text-white text-sm sm:text-base"
@@ -336,9 +336,11 @@ const AllProducts: React.FC = () => {
                   className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-gradient-to-r from-[#7a7a7a]/30 to-[#292929]/30 backdrop-blur-sm border border-[#7a7a7a]/40 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-[#7a7a7a] focus:border-transparent transition-all duration-300 text-white text-sm sm:text-base"
                 >
                   <option value="" className="bg-[#292929] text-white">جميع التصنيفات</option>
-                  {categories.map(category => (
-                    <option key={category.id} value={category.id} className="bg-[#292929] text-white">{category.name}</option>
-                  ))}
+                  {categories
+                    .filter(category => category.name !== 'ثيمات')
+                    .map(category => (
+                      <option key={category.id} value={category.id} className="bg-[#292929] text-white">{category.name}</option>
+                    ))}
                 </select>
               </div>
 
@@ -385,7 +387,7 @@ const AllProducts: React.FC = () => {
             {/* Results and Clear Filters */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pt-4 border-t border-[#7a7a7a]/30 gap-3 sm:gap-0">
               <div className="text-gray-100 text-sm sm:text-base">
-                <span className="font-semibold text-[#7a7a7a]">{filteredProducts.length}</span> منتج
+                <span className="font-semibold text-[#7a7a7a]">{filteredProducts.length}</span> خدمة
               </div>
               {(searchTerm || selectedCategory) && (
                 <button
@@ -431,14 +433,14 @@ const AllProducts: React.FC = () => {
                 <Package className="w-10 h-10 text-[#7a7a7a] filter drop-shadow-[0_0_10px_rgba(122,122,122,0.8)]" />
               </div>
             </div>
-            <h3 className="text-2xl font-bold text-white mb-4">لا توجد منتجات</h3>
+            <h3 className="text-2xl font-bold text-white mb-4">لا توجد خدمات</h3>
             <p className="text-lg text-gray-100 mb-8 max-w-md mx-auto">
               {searchTerm || selectedCategory
-                ? 'لم نجد منتجات تطابق معايير البحث. جرب تغيير المرشحات.'
-                : 'لا توجد منتجات متاحة حالياً. سيتم إضافة منتجات جديدة قريباً.'}
+                ? 'لم نجد خدمات تطابق معايير البحث. جرب تغيير المرشحات.'
+                : 'لا توجد خدمات متاحة حالياً. سيتم إضافة خدمات  جديدة قريباً.'} 
             </p>
             {(searchTerm || selectedCategory) && (
-              <button
+              <button 
                 onClick={() => {
                   setSearchTerm('');
                   setSelectedCategory(null);

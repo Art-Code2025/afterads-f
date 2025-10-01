@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { User, Search, Plus, Edit, Trash2 } from 'lucide-react';
 import { apiCall, API_ENDPOINTS, buildImageUrl } from '../config/api';
-import { smartToast } from '../utils/toastConfig';
-import logo from '../assets/logo.png';
+import { smartToast } from '../utils/toastConfig'; 
+import logo from '../assets/logo.webp'; 
 
 interface Testimonial {
   id: number;

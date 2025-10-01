@@ -142,7 +142,7 @@ const BlogPost: React.FC = () => {
               "name": "AfterAds",
               "logo": {
                 "@type": "ImageObject",
-                "url": `${siteUrl}/logo.png`
+                "url": `${siteUrl}/favi.ico`
               }
             },
             "datePublished": publishedDate,

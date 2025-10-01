@@ -134,7 +134,7 @@ const ProductDetail: React.FC = () => {
     if (productId) {
       fetchProduct();
     } else {
-      setError('معرف المنتج غير صحيح');
+      setError('معرف الخدمة غير صحيح');
       setLoading(false);
     }
     
@@ -159,7 +159,7 @@ const ProductDetail: React.FC = () => {
       const data = await apiCall(API_ENDPOINTS.PRODUCT_BY_ID(productId!));
       
       if (!data) {
-        throw new Error('فشل في تحميل المنتج');
+        throw new Error('فشل في تحميل الخدمة');
       }
       
       setProduct(data);
@@ -171,7 +171,7 @@ const ProductDetail: React.FC = () => {
       }
     } catch (error) {
       console.error('Error fetching product:', error);
-      setError('فشل في تحميل المنتج');
+      setError('فشل في تحميل الخدمة');
     } finally {
       setLoading(false);
     }
@@ -250,12 +250,10 @@ const ProductDetail: React.FC = () => {
         product.mainImage
       );
 
-      if (success) {
-        smartToast.frontend.success('✅ تم إضافة المنتج للسلة بنجاح!');
-      }
+      // Toast message is handled by addToCartUnified function
     } catch (error) {
       console.error('Error adding to cart:', error);
-      smartToast.frontend.error('حدث خطأ أثناء إضافة المنتج للسلة');
+      smartToast.frontend.error('حدث خطأ أثناء إضافة الخدمة للسلة');
     } finally {
       setAddingToCart(false);
     }
@@ -267,11 +265,11 @@ const ProductDetail: React.FC = () => {
     try {
       const success = await addToWishlistUnified(product.id, product.name);
       if (success) {
-        smartToast.frontend.success('✅ تم إضافة المنتج للمفضلة!');
+        smartToast.frontend.success('✅ تم إضافة الخدمة للمفضلة!');
       }
     } catch (error) {
       console.error('Error adding to wishlist:', error);
-      smartToast.frontend.error('حدث خطأ أثناء إضافة المنتج للمفضلة');
+      smartToast.frontend.error('حدث خطأ أثناء إضافة الخدمة للمفضلة');
     }
   };
 
@@ -367,21 +365,21 @@ const ProductDetail: React.FC = () => {
       <div className="min-h-screen bg-[#292929] flex items-center justify-center px-4">
         <div className="text-center max-w-md mx-auto">
           <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#18b5d8] mx-auto mb-4"></div>
-          <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">جاري تحميل المنتج...</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">جاري تحميل الخدمة...</h2>
           <p className="text-[#7a7a7a]">يرجى الانتظار</p>
         </div>
       </div>
     );
   }
 
-  // حالة الخطأ أو عدم وجود المنتج
+  // حالة الخطأ أو عدم وجود الخدمة
   if (error || !product) {
     return (
       <div className="min-h-screen bg-[#292929] flex items-center justify-center px-4" dir="rtl">
         <div className="text-center">
           <RefreshCw className="h-8 w-8 animate-spin mx-auto text-[#18b5d8] mb-4" />
           <h1 className="text-2xl font-bold text-white mb-4">جاري التحميل...</h1>
-          <p className="text-[#7a7a7a] mb-6">يتم تحميل بيانات المنتج</p>
+          <p className="text-[#7a7a7a] mb-6">يتم تحميل بيانات الخدمة</p>
         </div>
       </div>
     );
@@ -568,28 +566,31 @@ const ProductDetail: React.FC = () => {
           {/* Image Section with Immersive Effects */}
           <div className="space-y-3 sm:space-y-6">
             <div className="bg-gradient-to-br from-[#292929]/95 via-[#7a7a7a]/30 to-[#292929]/90 rounded-2xl sm:rounded-3xl backdrop-blur-xl border border-white/10 shadow-2xl p-3 sm:p-6 lg:p-8 overflow-hidden">
-              <div className="relative h-[250px] sm:h-[350px] lg:h-[500px] overflow-hidden rounded-2xl sm:rounded-3xl bg-[#4a4a4a]/20 parallax-bg">
+              {/* Main Image Container - Improved Mobile Responsiveness */}
+              <div className="relative w-full aspect-square sm:aspect-[4/3] lg:aspect-[3/2] overflow-hidden rounded-2xl sm:rounded-3xl bg-[#4a4a4a]/20 parallax-bg">
                 <img
                   src={buildImageUrl(selectedImage)}
                   alt={product.name}
-                  className="w-full h-full object-contain transition-all duration-500 hover:scale-110 micro-hover"
+                  className="w-full h-full object-cover sm:object-contain transition-all duration-500 hover:scale-105 micro-hover"
                   onError={(e) => {
                     e.currentTarget.src = '/placeholder-image.png';
                   }}
                 />
+                {/* Image Overlay for Better Mobile Viewing */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none"></div>
               </div>
 
-              {/* Thumbnails with Bold Minimalism */}
-              <div className="flex gap-2 sm:gap-3 lg:gap-4 overflow-x-auto pb-2 mt-3 sm:mt-4">
+              {/* Thumbnails with Enhanced Mobile Design */}
+              <div className="flex gap-2 sm:gap-3 lg:gap-4 overflow-x-auto pb-2 mt-3 sm:mt-4 scrollbar-hide">
                 <button
                   onClick={() => setSelectedImage(product.mainImage)}
-                  className={`flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-xl sm:rounded-2xl overflow-hidden border-2 transition-all duration-300 micro-hover ${
-                    selectedImage === product.mainImage ? 'border-[#18b5d8] shadow-lg scale-105' : 'border-[#7a7a7a] hover:border-[#18b5d8]'
+                  className={`flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 rounded-xl sm:rounded-2xl overflow-hidden border-2 transition-all duration-300 micro-hover ${
+                    selectedImage === product.mainImage ? 'border-[#18b5d8] shadow-lg shadow-[#18b5d8]/30 scale-105' : 'border-[#7a7a7a] hover:border-[#18b5d8]'
                   }`}
                 >
                   <img
                     src={buildImageUrl(product.mainImage)}
-                    alt="Main"
+                    alt="الصورة الرئيسية"
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       e.currentTarget.src = '/placeholder-image.png';
@@ -601,13 +602,13 @@ const ProductDetail: React.FC = () => {
                   <button
                     key={index}
                     onClick={() => setSelectedImage(image)}
-                    className={`flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-xl sm:rounded-2xl overflow-hidden border-2 transition-all duration-300 micro-hover ${
-                      selectedImage === image ? 'border-[#18b5d8] shadow-lg scale-105' : 'border-[#7a7a7a] hover:border-[#18b5d8]'
+                    className={`flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 rounded-xl sm:rounded-2xl overflow-hidden border-2 transition-all duration-300 micro-hover ${
+                      selectedImage === image ? 'border-[#18b5d8] shadow-lg shadow-[#18b5d8]/30 scale-105' : 'border-[#7a7a7a] hover:border-[#18b5d8]'
                     }`}
                   >
                     <img
                       src={buildImageUrl(image)}
-                      alt={`Detail ${index + 1}`}
+                      alt={`صورة تفصيلية ${index + 1}`}
                       className="w-full h-full object-cover"
                       onError={(e) => {
                         e.currentTarget.src = '/placeholder-image.png';
@@ -879,7 +880,7 @@ const ProductDetail: React.FC = () => {
               <div className="text-center py-8">
                 <User className="w-16 h-16 text-[#7a7a7a] mx-auto mb-4 animate-glow" />
                 <h5 className="text-lg font-medium text-white mb-2">سجل دخولك لإضافة تعليق</h5>
-                <p className="text-[#7a7a7a] mb-4">يجب تسجيل الدخول أولاً لتتمكن من إضافة تعليق وتقييم للمنتج</p>
+                <p className="text-[#7a7a7a] mb-4">يجب تسجيل الدخول أولاً لتتمكن من إضافة تعليق وتقييم للخدمة</p>
                 <button
                   onClick={() => setIsAuthModalOpen(true)}
                   className="bg-gradient-to-r from-[#7a7a7a] to-[#292929] text-white px-6 py-3 rounded-lg hover:from-[#292929] hover:to-[#7a7a7a] transition-colors font-medium flex items-center gap-2 mx-auto micro-hover"
@@ -1028,7 +1029,7 @@ const RelatedProducts: React.FC<{ currentProductId: number; categoryId: number |
       
       const filtered = productsData.filter((product: Product) => 
         Number(product.id) !== Number(currentProductId) &&
-        product.categoryId !== themesCategoryId // استبعاد منتجات الثيمات
+        product.categoryId !== themesCategoryId // استبعاد خدمات الثيمات
       );
       
       const shuffled = filtered.sort(() => Math.random() - 0.5);
@@ -1044,7 +1045,7 @@ const RelatedProducts: React.FC<{ currentProductId: number; categoryId: number |
   return (
     <div className="mt-12">
       <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-white mb-2">منتجات ذات صلة</h2>
+        <h2 className="text-2xl font-bold text-white mb-2">خدمات ذات صلة</h2>
         <div className="h-1 w-16 bg-gradient-to-r from-[#18b5d8] to-[#292929] mx-auto rounded-full"></div>
       </div>
       
@@ -1071,7 +1072,7 @@ const RelatedProducts: React.FC<{ currentProductId: number; categoryId: number |
                 />
               </div>
               <div className="absolute top-3 right-3 bg-[#18b5d8]/20 text-[#18b5d8] px-2 py-1 rounded-full text-xs font-bold">
-                منتج
+                خدمة
               </div>
             </div>
             <div className="p-4">

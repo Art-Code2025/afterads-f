@@ -24,12 +24,12 @@ const ContactSection: React.FC = () => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('animate-card-reveal');
-            entry.target.classList.remove('opacity-0', 'scale-95');
+            entry.target.classList.remove('opacity-0', 'translate-y-4');
             observer.unobserve(entry.target);
           }
         });
       },
-      { threshold: 0.3 }
+      { threshold: 0.1, rootMargin: '50px' }
     );
 
     if (formRef.current) observer.observe(formRef.current);

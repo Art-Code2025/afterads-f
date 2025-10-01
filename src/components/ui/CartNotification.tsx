@@ -74,7 +74,7 @@ const CartNotification: React.FC<CartNotificationProps> = ({
   if (!isVisible || !product) return null;
 
   return (
-    <div className="fixed top-16 sm:top-20 right-2 sm:right-4 z-50 max-w-xs sm:max-w-sm w-full px-2 sm:px-0">
+    <div className="hidden sm:block fixed top-16 sm:top-20 right-2 sm:right-4 z-50 max-w-xs sm:max-w-sm w-full px-2 sm:px-0">
       <div 
         className="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-xl sm:rounded-2xl shadow-2xl p-3 sm:p-4 transform transition-all duration-500 ease-out"
         style={{
@@ -109,7 +109,7 @@ const CartNotification: React.FC<CartNotificationProps> = ({
               className="w-full h-full object-cover"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
-                target.src = '/logo.png';
+                target.src = '/favi.ico';
               }}
             />
           </div>

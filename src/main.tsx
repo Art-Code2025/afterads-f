@@ -8,7 +8,6 @@ import { LoadingProvider, useLoading } from './contexts/LoadingContext';
 import Navbar from './components/layout/Navbar';
 import GlobalFooter from './components/layout/GlobalFooter';
 import CustomCursor from './components/ui/CustomCursor';
-import FloatingCartButton from './components/ui/FloatingCartButton';
 import CartNotification from './components/ui/CartNotification';
 import WhatsAppButton from './components/ui/WhatsAppButton';
 import App from './App';
@@ -111,7 +110,6 @@ const LayoutWrapper: React.FC = () => {
     <>
       <CustomCursor />
       {!shouldHideNavbar && <Navbar />}
-      <FloatingCartButton />
       <WhatsAppButton />
       <CartNotification 
         isVisible={showCartNotification}

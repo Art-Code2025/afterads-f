@@ -295,12 +295,6 @@ const CartDropdown: React.FC<CartDropdownProps> = ({ isOpen, onClose, onHoverCha
             <div className="p-3 xs:p-4 sm:p-6 text-center">
               <Package className="w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12 text-white/30 mx-auto mb-2 sm:mb-3" />
               <p className="text-white/70 mb-2 xs:mb-3 sm:mb-4 text-xs xs:text-sm sm:text-base">السلة فارغة</p>
-              <button
-                onClick={onClose}
-                className="text-[#18b5d8] hover:text-[#16a2c7] transition-colors text-sm sm:text-base"
-              >
-                تصفح المنتجات
-              </button>
             </div>
           ) : (
             <div className="p-1 xs:p-1 sm:p-2">
@@ -314,7 +308,7 @@ const CartDropdown: React.FC<CartDropdownProps> = ({ isOpen, onClose, onHoverCha
                       className="w-full h-full object-cover"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
-                        target.src = '/logo.png';
+                        target.src = '/favi.ico';
                       }}
                     />
                   </div>
